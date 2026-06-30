@@ -727,17 +727,18 @@ async function carregar() {
     }
 
     // Parse Treinos A/B/C (carga/evolução)
-    function parseTreinoFixo(raw) {
-      const out=[];
-      if(!raw) return out;
-      for(let i=3;i<raw.length;i++) {
-        const r=raw[i]; if(!r[0]||r[0]==='') continue;
-        const cargaMedia=parseNum(r[9]);
-        if(cargaMedia==null) continue;
-        out.push({ exercicio:r[0]||'', cargaMedia });
-      }
-      return out;
-    }
+   function parseTreinoFixo(raw) {
+  const out = {};
+  if(!raw) return [];
+  for(let i=3;i<raw.length;i++) {
+    const r=raw[i]; if(!r[0]||r[0]==='') continue;
+    const cargaMedia=parseNum(r[9]);
+    if(cargaMedia==null) continue;
+    out[r[0]] = { exercicio:r[0]||'', cargaMedia };
+  }
+  return Object.values(out);
+}
+
     const treinoAReg = parseTreinoFixo(dados.treinoA);
     const treinoBReg = parseTreinoFixo(dados.treinoB);
     const treinoCReg = parseTreinoFixo(dados.treinoC);
