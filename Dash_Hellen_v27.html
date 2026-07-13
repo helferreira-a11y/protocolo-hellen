@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dash_Hellen+ v27</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@300;400;600;700&display=swap');
+:root{
+  --bg:#0b0f17;--card:#11161f;--card2:#161c28;--borda:#232b3a;
+  --medio:#4d8fd1;--dourado:#e0457a;--gold2:#ec5f8f;--ambar:#4d8fd1;
+  --claro:#c9d4e3;--texto:#e8ecf2;--texto2:#6b7790;
+  --alerta:#e0457a;--alerta-bg:#1f0f17;--alerta-borda:#e0457a;
+  --verde:#3d9970;--verde-bg:#0a1f16;--amarelo:#c9a23d;--amarelo-bg:#1f1a0c;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--texto);font-family:'Inter',sans-serif;font-size:14px;}
+#loading{position:fixed;inset:0;background:rgba(11,15,23,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;}
+.spinner{width:38px;height:38px;border:2px solid var(--borda);border-top-color:var(--dourado);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:14px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.load-txt{color:var(--dourado);font-family:'Sora',sans-serif;font-size:13px;}
+header{background:linear-gradient(90deg,#1a0f14,#0f121a);border-bottom:1px solid var(--borda);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.h-title{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--dourado);}
+.h-sub{font-size:10px;color:var(--texto2);margin-top:2px;}
+.h-right{display:flex;align-items:center;gap:12px;}
+.badge{background:var(--verde-bg);border:1px solid var(--verde);color:var(--verde);padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;}
+.btn{background:var(--dourado);color:#fff;border:none;border-radius:6px;padding:7px 16px;font-size:11px;font-weight:700;cursor:pointer;}
+.btn:hover{background:var(--gold2);}
+.upd{font-size:10px;color:var(--texto2);}
+.tabs-main{display:flex;gap:3px;background:var(--card2);border:1px solid var(--borda);border-radius:9px;padding:3px;max-width:100%;overflow-x:auto;}
+.tab-main-btn{background:transparent;border:none;color:var(--texto2);font-size:10.5px;font-weight:700;padding:7px 12px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;}
+.tab-main-btn.active{background:var(--dourado);color:#fff;}
+main{padding:20px 28px;max-width:1440px;margin:0 auto;}
+.view-tab{display:none;}
+.view-tab.active{display:block;}
+.sec-label{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--medio);margin-bottom:10px;margin-top:4px;}
+.sec-cap{font-size:10px;color:var(--texto2);margin:-6px 0 12px;}
+.cc-card{background:linear-gradient(135deg,#1a0d14,#0d1420);border:1px solid var(--borda);border-radius:12px;padding:18px 20px;margin-bottom:20px;}
+.cc-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;}
+.cc-tile{background:var(--card);border:1px solid var(--borda);border-radius:10px;padding:12px;text-align:center;}
+.cc-tile-lbl{font-size:8px;color:var(--texto2);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;}
+.cc-tile-val{font-family:'Sora',sans-serif;font-size:19px;font-weight:700;color:var(--dourado);}
+.cc-check-row{display:flex;gap:8px;flex-wrap:wrap;}
+.cc-check-item{flex:1;min-width:110px;background:var(--card2);border:1px solid var(--borda);border-radius:8px;padding:9px;text-align:center;position:relative;overflow:hidden;}
+.cc-check-item::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--borda);}
+.cc-check-item.ok::before{background:var(--verde);}
+.cc-check-item.bad::before{background:var(--alerta);}
+.cc-check-item.warn::before{background:var(--amarelo);}
+.cc-check-ico{font-size:14px;margin-bottom:3px;}
+.cc-check-lbl{font-size:9px;color:var(--texto2);font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+.cc-check-val{font-size:11px;font-weight:700;color:var(--texto);margin-top:2px;}
+.cc-check-item.ok .cc-check-val{color:var(--verde);}
+.cc-check-item.bad .cc-check-val{color:var(--alerta);}
+.cc-check-item.warn .cc-check-val{color:var(--amarelo);}
+.score-tirze-wrap{display:grid;grid-template-columns:1fr 300px;gap:16px;margin-bottom:20px;}
+.score-hero{background:linear-gradient(135deg,#1a0d14,#0d1420);border:1px solid var(--borda);border-radius:12px;padding:20px 22px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.score-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(224,69,122,.1),transparent 70%);}
+.score-num{font-family:'Sora',sans-serif;font-size:64px;font-weight:700;line-height:1;letter-spacing:-3px;transition:color .5s;}
+.score-label-txt{font-size:10px;color:var(--texto2);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+.stars{font-size:17px;letter-spacing:3px;margin-top:6px;}
+.score-status-txt{font-family:'Sora',sans-serif;font-size:14px;font-weight:600;margin-top:2px;}
+.trend-badge{font-size:10px;font-weight:700;padding:4px 11px;border-radius:20px;margin-top:8px;}
+.trend-badge.great{background:var(--verde-bg);color:var(--verde);border:1px solid var(--verde);}
+.trend-badge.good{background:var(--verde-bg);color:var(--verde);border:1px solid var(--verde);opacity:.85;}
+.trend-badge.flat{background:var(--card2);color:var(--texto2);border:1px solid var(--borda);}
+.trend-badge.down{background:var(--alerta-bg);color:var(--alerta);border:1px solid var(--alerta);}
+.duo-wrap{display:flex;gap:8px;width:100%;margin-top:14px;}
+.duo-item{flex:1;background:var(--card2);border-radius:8px;padding:8px 10px;text-align:center;}
+.duo-lbl{font-size:8px;color:var(--texto2);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px;}
+.duo-val{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;}
+.duo-bar{height:4px;background:var(--borda);border-radius:2px;margin-top:5px;overflow:hidden;}
+.duo-fill{height:100%;border-radius:2px;}
+.tirze-side{background:linear-gradient(135deg,var(--card2),#180f08);border:1px solid var(--dourado);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;}
+.tirze-side h3{font-family:'Sora',sans-serif;font-size:12px;font-weight:600;color:var(--dourado);margin-bottom:2px;}
+.tirze-side-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:6px 0;border-bottom:1px solid var(--borda);}
+.tirze-side-row:last-of-type{border-bottom:none;}
+.tirze-side-lbl{color:var(--texto2);}
+.tirze-side-val{color:var(--gold2);font-weight:700;font-family:'Sora',sans-serif;}
+.tirze-side-link{font-size:9px;color:var(--medio);text-align:right;cursor:pointer;text-decoration:underline;}
+.alertas-wrap{margin-bottom:8px;display:flex;flex-direction:column;gap:8px;}
+.alerta-item{border-radius:8px;padding:12px 16px;display:flex;align-items:flex-start;gap:12px;border:1px solid;}
+.alerta-item.bad{background:var(--alerta-bg);border-color:var(--alerta);box-shadow:0 0 12px rgba(224,69,122,.15);}
+.alerta-item.warn{background:var(--amarelo-bg);border-color:var(--amarelo);}
+.alerta-item.good{background:var(--verde-bg);border-color:var(--verde);}
+.alerta-ico{font-size:20px;flex-shrink:0;margin-top:1px;}
+.alerta-body h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.alerta-item.bad h4{color:var(--alerta);}
+.alerta-item.warn h4{color:var(--amarelo);}
+.alerta-item.good h4{color:var(--verde);}
+.alerta-body p{font-size:11px;color:var(--claro);line-height:1.5;}
+.alerta-acao{font-size:10px;font-weight:700;margin-top:6px;padding:3px 10px;border-radius:5px;display:inline-block;}
+.alerta-item.bad .alerta-acao{background:var(--alerta);color:#fff;}
+.alerta-item.warn .alerta-acao{background:var(--amarelo);color:#141010;}
+.alerta-item.good .alerta-acao{background:var(--verde);color:var(--verde-bg);}
+.card{background:var(--card);border:1px solid var(--borda);border-radius:10px;padding:18px;}
+.card-title{font-size:12px;font-weight:600;color:var(--claro);margin-bottom:3px;}
+.card-sub{font-size:10px;color:var(--texto2);margin-bottom:12px;}
+.divider{height:1px;background:var(--borda);margin:10px 0 12px;}
+.tend-wrap{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px;}
+.svg-wrap{width:100%;overflow:hidden;}
+.prev-card{background:var(--card2);border:1px solid var(--borda);border-radius:9px;padding:12px 14px;margin-bottom:10px;}
+.prev-card:last-child{margin-bottom:0;}
+.prev-lbl{font-size:9px;color:var(--texto2);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;}
+.prev-val{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:var(--dourado);}
+.prev-sub{font-size:10px;color:var(--texto2);margin-top:3px;line-height:1.4;}
+.prev-conf{display:inline-block;margin-top:6px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--card);border:1px solid var(--borda);color:var(--texto2);}
+.check-list{display:flex;flex-direction:column;gap:8px;}
+.check-item{display:flex;align-items:center;gap:12px;background:var(--card2);border-radius:8px;padding:11px 14px;}
+.check-box{width:20px;height:20px;border-radius:5px;border:2px solid var(--borda);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;font-weight:700;}
+.check-box.done{background:var(--verde);border-color:var(--verde);color:#fff;}
+.check-box.pending{border-color:var(--amarelo);}
+.check-box.miss{border-color:var(--alerta);}
+.check-txt{flex:1;font-size:12px;color:var(--claro);font-weight:600;}
+.check-sub{font-size:10px;color:var(--texto2);margin-top:1px;}
+.rank-grid{display:flex;flex-direction:column;gap:8px;}
+.rank-item{display:flex;align-items:center;gap:14px;background:var(--card2);border-radius:8px;padding:11px 14px;}
+.rank-medal{font-size:22px;width:28px;text-align:center;}
+.rank-info{flex:1;}
+.rank-nome{font-size:12px;color:var(--claro);font-weight:600;}
+.rank-sub{font-size:9px;color:var(--texto2);}
+.rank-delta{font-family:'Sora',sans-serif;font-weight:700;font-size:15px;color:var(--verde);}
+.pr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.pr-card{background:var(--card2);border:1px solid var(--borda);border-radius:8px;padding:12px 14px;position:relative;overflow:hidden;}
+.pr-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--dourado);}
+.pr-card.pr-record::after{background:#ffd700;}
+.pr-ex{font-size:9px;color:var(--texto2);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;}
+.pr-carga{font-family:'Sora',sans-serif;font-size:28px;font-weight:700;color:var(--dourado);line-height:1;}
+.pr-unit{font-size:12px;font-weight:400;color:var(--texto2);margin-left:2px;}
+.pr-badge{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:10px;font-weight:700;}
+.pr-badge.record{color:#ffd700;}.pr-badge.up{color:var(--verde);}.pr-badge.flat{color:var(--texto2);}.pr-badge.sem{color:var(--texto2);font-style:italic;font-weight:400;}
+.tsem{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:10px;}
+.tdia{aspect-ratio:1;border-radius:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid var(--borda);font-size:8px;font-weight:600;}
+.tdia.ok{background:var(--verde-bg);border-color:var(--verde);color:var(--verde);}
+.tdia.rest{background:var(--card2);color:var(--texto2);}
+.tdia.fut{background:transparent;color:var(--borda);border-style:dashed;}
+.tdia-l{font-size:7px;margin-bottom:2px;}
+.ref-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--borda);}
+.ref-row:last-child{border-bottom:none;}
+.ref-nome{font-size:11px;color:var(--claro);}
+.ref-val{font-size:11px;font-weight:600;color:var(--dourado);font-family:'Sora',sans-serif;}
+.macro-bar{display:flex;height:5px;border-radius:3px;overflow:hidden;margin:8px 0;}
+.carga-ex{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--borda);}
+.carga-ex:last-child{border-bottom:none;}
+.carga-ex-nome{font-size:11px;color:var(--claro);}
+.carga-ex-val{font-size:11px;font-weight:700;color:var(--dourado);font-family:'Sora',sans-serif;}
+.evo-item{padding:7px 0;border-bottom:1px solid var(--borda);}
+.evo-item:last-child{border-bottom:none;}
+.evo-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.evo-nome{font-size:11px;color:var(--claro);}
+.evo-vals{text-align:right;}
+.evo-carga{font-size:12px;font-weight:700;color:var(--dourado);font-family:'Sora',sans-serif;}
+.evo-delta{font-size:10px;font-weight:600;}
+.medida-card{background:var(--card2);border-radius:8px;padding:10px 6px;text-align:center;}
+.medida-lbl{font-size:8px;color:var(--texto2);font-weight:700;letter-spacing:.5px;margin-bottom:5px;}
+.medida-val{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--dourado);}
+.medida-diff{font-size:9px;font-weight:600;margin-top:2px;}
+.medida-diff.down{color:var(--verde);}.medida-diff.up{color:var(--alerta);}.medida-diff.flat{color:var(--texto2);}
+.bars{display:flex;align-items:flex-end;gap:5px;height:90px;padding-bottom:16px;}
+.bar-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+.bar-v{font-size:7px;color:var(--dourado);font-weight:600;margin-bottom:2px;}
+.bar-b{width:100%;border-radius:3px 3px 0 0;min-height:3px;}
+.bar-l{font-size:7px;color:var(--texto2);margin-top:3px;}
+.hrow{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.hrow:last-child{margin-bottom:0;}
+.hem{font-size:14px;}
+.hbar{flex:1;height:5px;background:var(--borda);border-radius:3px;overflow:hidden;}
+.hfill{height:100%;border-radius:3px;}
+.hct{font-size:10px;color:var(--texto2);min-width:16px;text-align:right;}
+.sem-table{width:100%;border-collapse:collapse;font-size:11px;}
+.sem-table th{color:var(--texto2);font-weight:500;padding:5px 6px;text-align:left;border-bottom:1px solid var(--borda);font-size:9px;}
+.sem-table td{padding:6px 6px;border-bottom:1px solid var(--borda);color:var(--claro);}
+.sem-table tr:last-child td{border-bottom:none;}
+.sem-table .atual{color:var(--dourado);font-weight:600;}
+.pill{padding:2px 7px;border-radius:10px;font-size:9px;font-weight:600;}
+.vit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:8px;}
+.vit-card{background:var(--card);border:1px solid var(--borda);border-radius:10px;padding:14px;display:flex;align-items:center;gap:10px;}
+.vit-card.on{border-color:#ffd700;background:linear-gradient(135deg,var(--card),#1a1608);}
+.vit-card.off{opacity:.35;}
+.vit-ico{font-size:22px;}
+.vit-txt{font-size:11px;color:var(--claro);font-weight:600;line-height:1.3;}
+.vit-sub{font-size:9px;color:var(--texto2);margin-top:2px;}
+.timeline{position:relative;padding-left:22px;}
+.timeline::before{content:'';position:absolute;left:5px;top:4px;bottom:4px;width:2px;background:var(--borda);}
+.tl-item{position:relative;margin-bottom:14px;}
+.tl-item:last-child{margin-bottom:0;}
+.tl-dot{position:absolute;left:-22px;top:3px;width:11px;height:11px;border-radius:50%;background:var(--dourado);border:2px solid var(--bg);}
+.tl-dot.marco{background:#ffd700;}
+.tl-date{font-size:10px;color:var(--medio);font-weight:700;letter-spacing:.4px;text-transform:uppercase;}
+.tl-body{background:var(--card2);border-radius:8px;padding:10px 12px;margin-top:4px;}
+.tl-title{font-size:11px;color:var(--claro);font-weight:600;margin-bottom:3px;}
+.tl-detail{font-size:10px;color:var(--texto2);line-height:1.5;}
+.insight-card{background:var(--card2);border:1px solid var(--borda);border-radius:9px;padding:14px 16px;margin-bottom:10px;display:flex;gap:12px;}
+.insight-card:last-child{margin-bottom:0;}
+.insight-ico{font-size:20px;flex-shrink:0;}
+.insight-body{flex:1;}
+.insight-title{font-size:11px;font-weight:700;color:var(--claro);margin-bottom:4px;}
+.insight-txt{font-size:11px;color:var(--claro);line-height:1.5;}
+.insight-txt b{color:var(--dourado);}
+.insight-meta{font-size:9px;color:var(--texto2);margin-top:5px;}
+.insight-card.indisponivel{opacity:.55;}
+.brief-card{background:linear-gradient(135deg,#1a0d14,#0d1420);border:1px solid var(--dourado);border-radius:12px;padding:18px 22px;margin-bottom:20px;}
+.brief-title{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--dourado);margin-bottom:8px;}
+.brief-txt{font-size:12px;color:var(--claro);line-height:1.7;}
+.brief-txt b{color:var(--gold2);}
+.brief-foco{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.brief-foco-item{background:var(--card2);border:1px solid var(--borda);border-radius:20px;padding:4px 12px;font-size:10px;font-weight:700;color:var(--texto);}
+.dia-perfeito{background:var(--verde-bg);border:1px solid var(--verde);border-radius:12px;padding:20px 24px;text-align:center;margin-bottom:20px;}
+.dia-perfeito-ico{font-size:32px;margin-bottom:8px;}
+.dia-perfeito-txt{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--verde);}
+.dia-perfeito-sub{font-size:11px;color:var(--texto2);margin-top:4px;}
+.prio-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.prio-item{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--borda);border-radius:10px;padding:12px 16px;position:relative;overflow:hidden;}
+.prio-item::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--alerta);}
+.prio-item.p2::before{background:var(--amarelo);}
+.prio-item.p3::before{background:var(--medio);}
+.prio-num{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:var(--texto2);width:26px;text-align:center;flex-shrink:0;}
+.prio-info{flex:1;}
+.prio-txt{font-size:12px;font-weight:600;color:var(--claro);}
+.prio-sub{font-size:10px;color:var(--texto2);margin-top:2px;}
+.prio-stars{font-size:13px;color:#ffd700;letter-spacing:1px;flex-shrink:0;}
+.proj-grid{display:flex;flex-direction:column;gap:8px;}
+.proj-item{display:flex;justify-content:space-between;align-items:center;background:var(--card2);border-radius:8px;padding:10px 14px;}
+.proj-nome{font-size:11px;color:var(--claro);font-weight:600;}
+.proj-sub{font-size:9px;color:var(--texto2);margin-top:1px;}
+.proj-val{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:var(--medio);}
+.padrao-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:8px;}
+.padrao-dia{background:var(--card2);border-radius:8px;padding:8px 4px;text-align:center;border:1px solid var(--borda);}
+.padrao-dia.pior{border-color:var(--alerta);background:var(--alerta-bg);}
+.padrao-dia-lbl{font-size:8px;color:var(--texto2);font-weight:700;}
+.padrao-dia-val{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--texto);margin-top:4px;}
+.padrao-dia.pior .padrao-dia-val{color:var(--alerta);}
+.ex-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--borda);gap:8px;}
+.ex-row:last-child{border-bottom:none;}
+.ex-nome{font-size:11px;color:var(--claro);flex:1;}
+.ex-val{font-size:11px;font-weight:600;font-family:'Sora',sans-serif;}
+.ex-st{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:600;white-space:nowrap;}
+.st-ok{color:var(--verde);background:var(--verde-bg);}
+.st-warn{color:var(--amarelo);background:var(--amarelo-bg);}
+.st-bad{color:var(--alerta);background:var(--alerta-bg);}
+.st-vazio{color:var(--texto2);background:var(--card2);}
+.ex-form{background:var(--card);border:1px solid var(--dourado);border-radius:10px;padding:18px;display:none;}
+.ex-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px;max-height:480px;overflow-y:auto;padding-right:6px;}
+.fg label{display:block;font-size:9px;color:var(--texto2);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;}
+.fg input{width:100%;background:var(--card2);border:1px solid var(--borda);border-radius:6px;padding:7px 9px;color:var(--texto);font-size:12px;font-family:'Inter',sans-serif;outline:none;}
+.fg input:focus{border-color:var(--dourado);}
+footer{text-align:center;padding:16px;font-size:10px;color:var(--texto2);border-top:1px solid var(--borda);margin-top:20px;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--borda);border-radius:3px;}
+@media(max-width:1100px){.cc-tiles{grid-template-columns:repeat(2,1fr);}.score-tirze-wrap,.tend-wrap{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="loading"><div class="spinner"></div><div class="load-txt">Carregando protocolo...</div></div>
+<header>
+  <div><div class="h-title">DASH_HELLEN+ v27</div><div class="h-sub">Protocolo Pessoal · Início 14/06/2026</div></div>
+  <div class="h-right">
+    <span class="badge">● ATIVO</span><button class="btn" onclick="carregar()">↻ Atualizar</button><span class="upd" id="upd">—</span>
+  </div>
+</header>
+<div style="padding:14px 28px 0;max-width:1440px;margin:0 auto;">
+  <div class="tabs-main" id="tabs-main">
+    <button class="tab-main-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">Dashboard</button>
+    <button class="tab-main-btn" data-tab="treino" onclick="switchTab('treino')">Treino</button>
+    <button class="tab-main-btn" data-tab="nutricao" onclick="switchTab('nutricao')">Nutrição</button>
+    <button class="tab-main-btn" data-tab="protocolo" onclick="switchTab('protocolo')">Protocolo</button>
+    <button class="tab-main-btn" data-tab="resultados" onclick="switchTab('resultados')">Resultados</button>
+    <button class="tab-main-btn" data-tab="laboratorio" onclick="switchTab('laboratorio')">Laboratório</button>
+    <button class="tab-main-btn" data-tab="insights" onclick="switchTab('insights')">Insights</button>
+  </div>
+</div>
+<main>
+<!-- ══════════ DASHBOARD ══════════ -->
+<div class="view-tab active" id="tab-dashboard">
+<div class="brief-card">
+  <div class="brief-title" id="brief-saudacao">—</div>
+  <div class="brief-txt" id="brief-txt">Carregando resumo do dia...</div>
+  <div class="brief-foco" id="brief-foco"></div>
+</div>
+<div id="prioridade-wrap" style="margin-bottom:20px;"></div>
+<div class="sec-label">🎯 Centro de Controle</div>
+<div class="cc-card">
+  <div class="cc-tiles">
+    <div class="cc-tile"><div class="cc-tile-lbl">Score</div><div class="cc-tile-val" id="cc-score">—</div></div>
+    <div class="cc-tile"><div class="cc-tile-lbl">Peso</div><div class="cc-tile-val" id="cc-peso">—</div></div>
+    <div class="cc-tile"><div class="cc-tile-lbl">Meta</div><div class="cc-tile-val" style="color:var(--verde)">80kg</div></div>
+    <div class="cc-tile"><div class="cc-tile-lbl">Faltam</div><div class="cc-tile-val" id="cc-faltam">—</div></div>
+    <div class="cc-tile"><div class="cc-tile-lbl">Previsão</div><div class="cc-tile-val" id="cc-previsao" style="font-size:14px;">—</div></div>
+  </div>
+  <div class="cc-check-row" id="cc-check-row"></div>
+</div>
+<div class="sec-label">📊 Score do Protocolo</div>
+<div class="score-tirze-wrap">
+  <div class="score-hero">
+    <div class="score-num" id="score-num">—</div>
+    <div class="score-label-txt">HF SCORE</div>
+    <div class="stars" id="score-stars">—</div>
+    <div class="score-status-txt" id="score-status">—</div>
+    <div class="trend-badge flat" id="trend-badge">—</div>
+    <div class="duo-wrap">
+      <div class="duo-item"><div class="duo-lbl">Resultado</div><div class="duo-val" id="duo-resultado" style="color:var(--dourado)">—</div><div class="duo-bar"><div class="duo-fill" id="duo-resultado-bar" style="width:0%;background:var(--dourado)"></div></div></div>
+      <div class="duo-item"><div class="duo-lbl">Aderência</div><div class="duo-val" id="duo-aderencia" style="color:var(--medio)">—</div><div class="duo-bar"><div class="duo-fill" id="duo-aderencia-bar" style="width:0%;background:var(--medio)"></div></div></div>
+    </div>
+  </div>
+  <div class="tirze-side">
+    <h3>💉 Tirzepatida</h3>
+    <div class="tirze-side-row"><span class="tirze-side-lbl">Semana / Local</span><span class="tirze-side-val" id="ts-semana-local">—</span></div>
+    <div class="tirze-side-row"><span class="tirze-side-lbl">Próx. aplicação</span><span class="tirze-side-val" id="ts-prox">—</span></div>
+    <div class="tirze-side-row"><span class="tirze-side-lbl">Peso perdido</span><span class="tirze-side-val" style="color:var(--verde)" id="ts-perdido">—</span></div>
+    <div class="tirze-side-link" onclick="switchTab('protocolo')">Ver protocolo completo →</div>
+  </div>
+</div>
+<div class="sec-label">⚡ Alertas & Decisões</div>
+<div class="alertas-wrap" id="alertas-wrap" style="margin-bottom:20px;">
+  <div class="alerta-item warn"><div class="alerta-ico">⏳</div><div class="alerta-body"><h4>Carregando</h4><p>Buscando dados...</p></div></div>
+</div>
+<div class="sec-label">⚖️ Peso</div>
+<div class="card" style="margin-bottom:20px;">
+  <div class="card-title">Curva de Peso — Evolução Real vs Projeção</div>
+  <div class="card-sub">Meta: 85kg dez/26 → 80kg mar/27 → 72kg jun/27</div>
+  <svg viewBox="0 0 520 150" class="svg-wrap" id="svg-peso">
+    <defs><linearGradient id="gradPeso" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e0457a" stop-opacity=".3"/><stop offset="100%" stop-color="#e0457a" stop-opacity="0"/></linearGradient></defs>
+    <line x1="44" y1="19" x2="515" y2="19" stroke="#232b3a" stroke-width="1" stroke-dasharray="3"/>
+    <line x1="44" y1="42" x2="515" y2="42" stroke="#232b3a" stroke-width="1" stroke-dasharray="3"/>
+    <line x1="44" y1="64" x2="515" y2="64" stroke="#232b3a" stroke-width="1" stroke-dasharray="3"/>
+    <line x1="44" y1="86" x2="515" y2="86" stroke="#232b3a" stroke-width="1" stroke-dasharray="3"/>
+    <line x1="44" y1="108" x2="515" y2="108" stroke="#232b3a" stroke-width="1" stroke-dasharray="3"/>
+    <line x1="44" y1="130" x2="515" y2="130" stroke="#232b3a" stroke-width="1" stroke-dasharray="3"/>
+    <text x="2" y="22" fill="#8a7060" font-size="8">95kg</text>
+    <text x="2" y="45" fill="#8a7060" font-size="8">90kg</text>
+    <text x="2" y="67" fill="#8a7060" font-size="8">85kg</text>
+    <text x="2" y="89" fill="#8a7060" font-size="8">80kg</text>
+    <text x="2" y="111" fill="#8a7060" font-size="8">75kg</text>
+    <text x="2" y="133" fill="#8a7060" font-size="8">70kg</text>
+    <line id="linha-meta-80" x1="44" y1="0" x2="515" y2="0" stroke="#3d9970" stroke-width="1" stroke-dasharray="5" opacity=".4"/>
+    <text id="txt-meta-80" x="513" y="0" fill="#3d9970" font-size="7" text-anchor="end">80kg · mar/27</text>
+    <polyline id="proj-line" fill="none" stroke="#4d8fd1" stroke-width="1.2" stroke-dasharray="4" opacity=".5"/>
+    <polyline id="media-movel-line" fill="none" stroke="#c9a23d" stroke-width="1.3" opacity=".8"/>
+    <circle id="marco-dez" cx="0" cy="0" r="3" fill="#4d8fd1" opacity="0"/>
+    <text id="marco-dez-txt" x="0" y="0" fill="#4d8fd1" font-size="7" text-anchor="middle" opacity="0">85kg dez/26</text>
+    <line id="linha-meta-final" x1="44" y1="0" x2="515" y2="0" stroke="#c9a23d" stroke-width="1" stroke-dasharray="2,3" opacity=".5"/>
+    <text id="txt-meta-final" x="513" y="0" fill="#c9a23d" font-size="7" text-anchor="end">72kg · jun/27</text>
+    <polygon id="area-peso" fill="url(#gradPeso)" opacity=".6"/>
+    <polyline id="linha-peso" fill="none" stroke="#e0457a" stroke-width="2" stroke-linejoin="round"/>
+    <g id="pts-peso"></g>
+    <text x="260" y="80" fill="#232b3a" font-size="11" text-anchor="middle" id="peso-placeholder">Registre peso diariamente</text>
+  </svg>
+  <div style="display:flex;gap:14px;margin-top:8px;font-size:9px;color:var(--texto2);"><span><span style="color:#e0457a">●</span> Peso registrado</span><span><span style="color:#c9a23d">●</span> Média móvel 7d</span><span><span style="color:#4d8fd1">●</span> Projeção</span></div>
+</div>
+<div class="sec-label">🔮 Previsões</div>
+<div id="prev-lista" style="margin-bottom:20px;"></div>
+</div>
+<!-- ══════════ TREINO ══════════ -->
+<div class="view-tab" id="tab-treino">
+<div class="sec-label">✅ Checklist de Hoje</div>
+<div class="check-list" id="check-treino" style="margin-bottom:20px;max-width:420px;"></div>
+<div class="sec-label">🏆 Top Evolução</div>
+<div class="card" style="margin-bottom:20px;">
+  <div class="card-title">Ranking por ganho de carga</div>
+  <div class="card-sub">Do primeiro ao último registro de cada exercício acompanhado</div>
+  <div class="rank-grid" id="rank-grid"></div>
+</div>
+<div class="sec-label">📅 Semana & Cardio</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
+  <div class="card">
+    <div class="card-title">Semana Atual</div>
+    <div class="card-sub" id="treino-per">—</div>
+    <div class="tsem" id="tsem"></div>
+    <div id="treino-msg"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Cardio — Últimos 7 dias</div>
+    <div class="card-sub">Minutos, distância e calorias</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;">
+      <div style="background:var(--card2);border-radius:7px;padding:8px;text-align:center;"><div style="font-size:8px;color:var(--texto2);margin-bottom:2px;">MIN</div><div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:var(--ambar);" id="cardio-min">—</div></div>
+      <div style="background:var(--card2);border-radius:7px;padding:8px;text-align:center;"><div style="font-size:8px;color:var(--texto2);margin-bottom:2px;">KM</div><div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:var(--ambar);" id="cardio-km">—</div></div>
+      <div style="background:var(--card2);border-radius:7px;padding:8px;text-align:center;"><div style="font-size:8px;color:var(--texto2);margin-bottom:2px;">KCAL</div><div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:var(--ambar);" id="cardio-cal">—</div></div>
+    </div>
+    <div id="cardio-lista"></div>
+  </div>
+</div>
+<div class="sec-label">💪 Performance — Cargas & PRs</div>
+<div class="pr-grid" style="margin-bottom:14px;">
+  <div class="pr-card" id="pr-hipthrust">
+    <div class="pr-ex">Hip Thrust Máquina</div>
+    <div class="pr-carga" id="pr-ht-carga">—<span class="pr-unit">kg</span></div>
+    <div class="pr-badge sem" id="pr-ht-badge">Sem dados ainda</div>
+  </div>
+  <div class="pr-card" id="pr-beltsquat">
+    <div class="pr-ex">Belt Squat</div>
+    <div class="pr-carga" id="pr-bs-carga">—<span class="pr-unit">kg</span></div>
+    <div class="pr-badge sem" id="pr-bs-badge">Sem dados ainda</div>
+  </div>
+  <div class="pr-card" id="pr-stiff">
+    <div class="pr-ex">Stiff Barra Olímpica</div>
+    <div class="pr-carga" id="pr-st-carga">—<span class="pr-unit">kg</span></div>
+    <div class="pr-badge sem" id="pr-st-badge">Sem dados ainda</div>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+  <div class="card">
+    <div class="card-title">Carga Mais Recente por Exercício</div>
+    <div class="card-sub">Última carga média registrada</div>
+    <div id="carga-lista" style="max-height:260px;overflow-y:auto;"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📈 Progressão Semana a Semana</div>
+    <div class="card-sub">Evolução de carga por exercício</div>
+    <div id="evolucao-carga-lista" style="max-height:260px;overflow-y:auto;"></div>
+  </div>
+</div>
+<div class="sec-label">🔮 Projeção de Carga — Próxima Semana</div>
+<div class="card" style="margin-bottom:20px;">
+  <div class="card-title">Extrapolação linear</div>
+  <div class="card-sub">Não é garantia — é a linha de tendência das últimas semanas continuada. Exercícios com 3+ semanas de histórico.</div>
+  <div class="proj-grid" id="proj-grid"></div>
+</div>
+</div>
+<!-- ══════════ NUTRIÇÃO ══════════ -->
+<div class="view-tab" id="tab-nutricao">
+<div class="sec-label">✅ Checklist de Hoje</div>
+<div class="check-list" id="check-nutricao" style="margin-bottom:20px;max-width:420px;"></div>
+<div class="sec-label">🍽️ Refeições & Macros</div>
+<div class="card" style="margin-bottom:20px;">
+  <div class="card-title">Refeições de Hoje</div>
+  <div class="card-sub" id="ref-sub">—</div>
+  <div id="ref-lista"></div>
+  <div style="margin-top:10px;background:var(--card2);border-radius:7px;padding:8px 10px;">
+    <div class="macro-bar" id="macro-bar"></div>
+    <div style="display:flex;justify-content:space-between;font-size:10px;">
+      <span><span style="color:var(--dourado)">■</span> Prot <b id="m-p">—</b></span>
+      <span><span style="color:var(--medio)">■</span> Carbo <b id="m-c">—</b></span>
+      <span><span style="color:var(--borda)">■</span> Gord <b id="m-g">—</b></span>
+      <span style="color:var(--texto2)">Kcal <b id="m-k">—</b></span>
+    </div>
+  </div>
+</div>
+<div class="sec-label">📊 Aderência — 14 dias</div>
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:20px;">
+  <div class="card"><div class="card-title">Proteína — 14 dias</div><div class="card-sub">Meta 120g · Vermelho = risco</div><div class="bars" id="bar-prot"></div></div>
+  <div class="card"><div class="card-title">Água — 14 dias</div><div class="card-sub">Meta 2.500ml</div><div class="bars" id="bar-agua"></div></div>
+</div>
+<div class="sec-label">🙂 Humor</div>
+<div class="card" style="margin-bottom:20px;max-width:480px;">
+  <div class="card-title">Humor</div>
+  <div class="card-sub">Distribuição desde o início</div>
+  <div id="humor-wrap" style="margin-top:4px;"></div>
+</div>
+</div>
+<!-- ══════════ PROTOCOLO ══════════ -->
+<div class="view-tab" id="tab-protocolo">
+<div class="sec-label">💉 Tirzepatida</div>
+<div class="card" style="margin-bottom:20px;">
+  <div class="card-title">Tirzepatida 5mg · Toda terça às 10h</div>
+  <div class="card-sub">Rodízio: Abdômen D → Abdômen E → Coxa D → Coxa E → Braço D → Braço E</div>
+  <div class="cc-tiles" style="grid-template-columns:repeat(6,1fr);">
+    <div class="cc-tile"><div class="cc-tile-lbl">Semana</div><div class="cc-tile-val" id="tz-semana">—</div></div>
+    <div class="cc-tile"><div class="cc-tile-lbl">Local hoje</div><div class="cc-tile-val" id="tz-local" style="font-size:12px;">—</div></div>
+    <div class="cc-tile"><div class="cc-tile-lbl">Próx. aplicação</div><div class="cc-tile-val" id="tz-prox" style="font-size:13px;">—</div></div>
+    <div class="cc-tile"><div class="cc-tile-lbl">Dias desde última</div><div class="cc-tile-val" id="tz-desde">—</div></div>
+    <div class="cc-tile"><div class="cc-tile-lbl">Náusea (7d)</div><div class="cc-tile-val" id="tz-nausea" style="font-size:12px;">—</div></div>
+    <div class="cc-tile"><div class="cc-tile-lbl">Peso perdido</div><div class="cc-tile-val" id="tz-perdido" style="color:var(--verde);">—</div></div>
+  </div>
+</div>
+<div class="sec-label">🔁 Padrão de Sintomas por Dia do Ciclo</div>
+<div class="card" style="margin-bottom:20px;">
+  <div class="card-title">Náusea alinhada aos dias desde a aplicação</div>
+  <div class="card-sub" id="padrao-sub">—</div>
+  <div class="padrao-grid" id="padrao-grid"></div>
+</div>
+<div class="sec-label">🕐 Timeline do Protocolo</div>
+<div class="card" style="margin-bottom:20px;">
+  <div class="card-title">Semana a semana</div>
+  <div class="card-sub">Peso, dose e medidas — sem fotos (sem fonte de dado ainda)</div>
+  <div class="timeline" id="timeline-wrap"></div>
+</div>
+</div>
+<!-- ══════════ RESULTADOS ══════════ -->
+<div class="view-tab" id="tab-resultados">
+<div class="sec-label">📏 Medidas & Análise Semanal</div>
+<div class="tend-wrap" style="margin-bottom:14px;">
+  <div class="card">
+    <div class="card-title">Medidas Corporais</div>
+    <div class="card-sub" id="medidas-sub">—</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;">
+      <div class="medida-card"><div class="medida-lbl">CINTURA</div><div class="medida-val" id="med-cintura">—</div><div class="medida-diff" id="med-cintura-diff">—</div></div>
+      <div class="medida-card"><div class="medida-lbl">QUADRIL</div><div class="medida-val" id="med-quadril">—</div><div class="medida-diff" id="med-quadril-diff">—</div></div>
+      <div class="medida-card"><div class="medida-lbl">BRAÇO</div><div class="medida-val" id="med-braco">—</div><div class="medida-diff" id="med-braco-diff">—</div></div>
+      <div class="medida-card"><div class="medida-lbl">COXA</div><div class="medida-val" id="med-coxa">—</div><div class="medida-diff" id="med-coxa-diff">—</div></div>
+      <div class="medida-card"><div class="medida-lbl">ABDÔMEN</div><div class="medida-val" id="med-abdomen">—</div><div class="medida-diff" id="med-abdomen-diff">—</div></div>
+      <div class="medida-card"><div class="medida-lbl">PEITO</div><div class="medida-val" id="med-peito">—</div><div class="medida-diff" id="med-peito-diff">—</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Análise Semanal</div>
+    <div class="card-sub">Semana a semana</div>
+    <table class="sem-table"><thead><tr><th>Sem</th><th>Prot</th><th>Água</th><th>Treino</th></tr></thead><tbody id="sem-body"><tr><td colspan="4" style="color:var(--texto2);text-align:center;padding:12px">...</td></tr></tbody></table>
+  </div>
+</div>
+<div class="sec-label">🏆 Vitórias</div>
+<div class="vit-grid" id="vit-grid" style="margin-bottom:20px;"></div>
+</div>
+<!-- ══════════ LABORATÓRIO ══════════ -->
+<div class="view-tab" id="tab-laboratorio">
+<div class="sec-label">🧪 Exames Laboratoriais</div>
+<div class="card" style="margin-bottom:8px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <div><div class="card-title">Resultados — Exame 16/06/2026</div><div class="card-sub">Comparativo com exame anterior</div></div>
+    <button class="btn" style="font-size:10px;padding:6px 14px;" onclick="toggleEx()">+ Atualizar Exames</button>
+  </div>
+  <div id="ex-lista" style="max-height:520px;overflow-y:auto;padding-right:6px;"></div>
+</div>
+<div class="ex-form" id="ex-form" style="margin-bottom:20px;">
+  <div class="sec-label">Inserir / Atualizar Valores</div>
+  <div class="ex-grid">
+    <div class="fg"><label>Glicemia Jejum (mg/dL)</label><input type="number" id="ex-gli" placeholder="ex: 90"></div>
+    <div class="fg"><label>Insulina (µUI/mL)</label><input type="number" id="ex-ins" placeholder="ex: 8.5" step=".1"></div>
+    <div class="fg"><label>TSH (µUI/mL)</label><input type="number" id="ex-tsh" placeholder="ex: 2.1" step=".01"></div>
+    <div class="fg"><label>T4 Livre (ng/dL)</label><input type="number" id="ex-t4" placeholder="ex: 1.0" step=".01"></div>
+    <div class="fg"><label>T3 Livre (pg/mL)</label><input type="number" id="ex-t3" placeholder="ex: 2.9" step=".1"></div>
+    <div class="fg"><label>Colesterol Total (mg/dL)</label><input type="number" id="ex-col" placeholder="ex: 180"></div>
+    <div class="fg"><label>HDL (mg/dL)</label><input type="number" id="ex-hdl" placeholder="ex: 55"></div>
+    <div class="fg"><label>LDL (mg/dL)</label><input type="number" id="ex-ldl" placeholder="ex: 100"></div>
+    <div class="fg"><label>VLDL (mg/dL)</label><input type="number" id="ex-vldl" placeholder="ex: 27"></div>
+    <div class="fg"><label>Triglicerídeos (mg/dL)</label><input type="number" id="ex-tri" placeholder="ex: 120"></div>
+    <div class="fg"><label>Vitamina D (ng/mL)</label><input type="number" id="ex-vitd" placeholder="ex: 32" step=".1"></div>
+    <div class="fg"><label>Vitamina B12 (pg/mL)</label><input type="number" id="ex-b12" placeholder="ex: 400"></div>
+    <div class="fg"><label>Ácido Fólico (ng/mL)</label><input type="number" id="ex-folico" placeholder="ex: 4.3" step=".1"></div>
+    <div class="fg"><label>Ferritina (ng/mL)</label><input type="number" id="ex-ferritina" placeholder="ex: 150"></div>
+    <div class="fg"><label>Ferro Sérico (µg/dL)</label><input type="number" id="ex-ferro" placeholder="ex: 89"></div>
+    <div class="fg"><label>Ácido Úrico (mg/dL)</label><input type="number" id="ex-urico" placeholder="ex: 5.7" step=".1"></div>
+    <div class="fg"><label>Creatinina (mg/dL)</label><input type="number" id="ex-creat" placeholder="ex: 0.92" step=".01"></div>
+    <div class="fg"><label>TFG Estimada (mL/min)</label><input type="number" id="ex-tfg" placeholder="ex: 80"></div>
+    <div class="fg"><label>TGO/AST (U/L)</label><input type="number" id="ex-tgo" placeholder="ex: 23"></div>
+    <div class="fg"><label>TGP/ALT (U/L)</label><input type="number" id="ex-tgp" placeholder="ex: 34"></div>
+    <div class="fg"><label>Gama GT (U/L)</label><input type="number" id="ex-ggt" placeholder="ex: 56"></div>
+    <div class="fg"><label>Fosfatase Alcalina (U/L)</label><input type="number" id="ex-fa" placeholder="ex: 52"></div>
+    <div class="fg"><label>PCR Ultra-sensível (mg/L)</label><input type="number" id="ex-pcr" placeholder="ex: 3.5" step=".1"></div>
+    <div class="fg"><label>Homocisteína (µmol/L)</label><input type="number" id="ex-homo" placeholder="ex: 9"></div>
+    <div class="fg"><label>Cortisol Basal (µg/dL)</label><input type="number" id="ex-cortisol" placeholder="ex: 25.9" step=".1"></div>
+    <div class="fg"><label>PTH Intacto (pg/mL)</label><input type="number" id="ex-pth" placeholder="ex: 43.1" step=".1"></div>
+    <div class="fg"><label>Testosterona Total (ng/dL)</label><input type="number" id="ex-testo" placeholder="ex: 32" step=".1"></div>
+    <div class="fg"><label>Testosterona Livre (ng/dL)</label><input type="number" id="ex-testolivre" placeholder="ex: 0.58" step=".01"></div>
+    <div class="fg"><label>SHBG (nmol/L)</label><input type="number" id="ex-shbg" placeholder="ex: 32.8" step=".1"></div>
+    <div class="fg"><label>Estradiol (pg/mL)</label><input type="number" id="ex-estradiol" placeholder="ex: 62" step=".1"></div>
+    <div class="fg"><label>Progesterona (ng/mL)</label><input type="number" id="ex-prog" placeholder="ex: 1.77" step=".01"></div>
+    <div class="fg"><label>SDHEA (µg/dL)</label><input type="number" id="ex-sdhea" placeholder="ex: 198"></div>
+    <div class="fg"><label>Fibrinogênio (mg/dL)</label><input type="number" id="ex-fibri" placeholder="ex: 320"></div>
+    <div class="fg"><label>VHS (mm 1ª hora)</label><input type="number" id="ex-vhs" placeholder="ex: 16"></div>
+  </div>
+  <button class="btn" style="margin-top:12px;" onclick="salvarEx()">💾 Salvar</button>
+</div>
+</div>
+<!-- ══════════ INSIGHTS ══════════ -->
+<div class="view-tab" id="tab-insights">
+<div class="sec-label">🧠 Insights</div>
+<div class="sec-cap">Correlações calculadas sobre seus próprios dados — só aparece afirmação quando há amostra mínima. Correlação não é causalidade.</div>
+<div id="insights-lista" style="margin-bottom:20px;"></div>
+</div>
+</main>
+<footer>Dash_Hellen+ v27 · 2026 · Protocolo Pessoal · Não substitui acompanhamento médico</footer>
+<script>
+const API='https://script.google.com/macros/s/AKfycbxAboD6pqWYey28GX_SVWxb9dW_BQfmaGU36PhkmA3oQ0HKv2EM4UnxuYxA6BulwkVOgQ/exec';
+const EX_PDF={gli:90,ins:26.8,tsh:3.81,t4:1.00,t3:2.9,col:203,hdl:48,ldl:128,vldl:27,tri:155,vitd:27,b12:412,folico:4.3,ferritina:155,ferro:89,urico:5.7,creat:.92,tfg:80,tgo:23,tgp:34,ggt:56,fa:52,pcr:3.5,homo:9,cortisol:25.90,pth:43.1,testo:32.0,testolivre:.58,shbg:32.8,estradiol:62.0,prog:1.77,sdhea:198,fibri:320,vhs:16};
+let exames=JSON.parse(localStorage.getItem('ex_hellen')||'null')||EX_PDF;
+if(!localStorage.getItem('ex_hellen'))localStorage.setItem('ex_hellen',JSON.stringify(exames));
+const hoje=()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate());};
+const PROTOCOLO_INICIO=new Date(2026,5,14); // domingo 14/06/2026 22h · 2,5mg
+const ULTIMA_APLICACAO_REAL=new Date(2026,6,5); // domingo 05/07/2026 · última dose de 2,5mg de fato aplicada (12/07 foi pulado)
+const CADENCIA_NOVA=new Date(2026,6,14); // terça 14/07/2026 10h · 5mg — primeira dose no novo esquema
+function calcAplicacao(hj){
+  // Retorna {prox, ult} respeitando a virada de cadência (domingo 22h → terça 10h) sem inventar doses que não aconteceram.
+  if(hj<CADENCIA_NOVA){
+    return{prox:new Date(CADENCIA_NOVA),ult:new Date(ULTIMA_APLICACAO_REAL)};
+  }
+  let prox=new Date(CADENCIA_NOVA);while(prox<=hj)prox.setDate(prox.getDate()+7);
+  let ult=new Date(CADENCIA_NOVA);while(true){const next=new Date(ult);next.setDate(next.getDate()+7);if(next>hj)break;ult=next;}
+  return{prox,ult};
+}
+const clamp=v=>Math.max(0,Math.min(100,v));
+function isTreinoRealizado(tr){if(!tr)return false;const t=tr.toLowerCase();return t.includes('treino')||t.includes('cardio')||t.includes('avulso');}
+const mesmoDia=(a,b)=>a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
+function parseData(s){if(!s||s==='')return null;const str=s.toString();if(str.includes('T')){const d=new Date(str);return new Date(d.getFullYear(),d.getMonth(),d.getDate());}const m=str.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m)return new Date(+m[3],+m[2]-1,+m[1]);return null;}
+function parseNum(s){if(s===null||s===undefined||s===''||s==='—')return null;if(typeof s==='number'){if(s>10000)return null;return s;}const n=parseFloat(s.toString().replace(/\./g,'').replace(',','.'));if(isNaN(n)||n>10000)return null;return n;}
+function media(arr){const v=arr.filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null;}
+function switchTab(t){document.querySelectorAll('.view-tab').forEach(el=>el.classList.remove('active'));document.getElementById('tab-'+t).classList.add('active');document.querySelectorAll('.tab-main-btn').forEach(el=>el.classList.toggle('active',el.dataset.tab===t));}
+async function carregar(){
+  document.getElementById('loading').style.display='flex';
+  try{
+    const resp=await fetch(API);if(!resp.ok)throw new Error('Erro API');
+    const dados=await resp.json();
+    const dd=dados.diarioDia;const da=dados.diarioAlimentar;
+    const regs=[];
+    for(let i=2;i<dd.length;i++){const r=dd[i];if(!r[0]||r[0]==='')continue;const data=parseData(r[0]);if(!data)continue;regs.push({data,peso:parseNum(r[1]),humor:r[2]||'',nausea:r[3]||'',energia:r[4]||'',agua:parseNum(r[5]),treino:r[7]||'',prot:parseNum(r[8])});}
+    regs.sort((a,b)=>a.data-b.data);
+    const refs=[];let idxRefStart=8;
+    for(let i=0;i<da.length;i++){if(da[i]&&da[i][3]&&da[i][3].toString().toLowerCase().includes('alimento')){idxRefStart=i+1;break;}}
+    for(let i=idxRefStart;i<da.length;i++){const r=da[i];if(!r[0]||r[0]==='')continue;const data=parseData(r[0]);if(!data)continue;if(!r[3]||r[3]==='')continue;refs.push({data,horario:r[1]||'',refeicao:r[2]||'',alimento:r[3]||'',prot:parseNum(r[5])||0,carbo:parseNum(r[6])||0,gord:parseNum(r[7])||0,kcal:parseNum(r[8])||0});}
+    const hj=hoje();const regHoje=regs.find(r=>mesmoDia(r.data,hj));
+    const cardioReg=[];const cardioRaw=dados.treinoCardio||[];
+    for(let i=2;i<cardioRaw.length;i++){const r=cardioRaw[i];if(!r[0]||r[0]==='')continue;const data=parseData(r[0]);if(!data)continue;cardioReg.push({data,tipo:r[1]||'',duracao:parseNum(r[2])||0,intensidade:r[3]||'',distancia:parseNum(r[4])||0,calorias:parseNum(r[6])||0});}
+    function parseTreinoFixo(raw){const out={};if(!raw)return[];for(let i=3;i<raw.length;i++){const r=raw[i];if(!r[0]||r[0]==='')continue;const cm=parseNum(r[9]);if(cm==null)continue;out[r[0]]={exercicio:r[0],cargaMedia:cm};}return Object.values(out);}
+    function parseTreinoEvolucao(raw){const mapa={};if(!raw)return mapa;let semAtual=0;for(let i=0;i<raw.length;i++){const r=raw[i];if(!r||!r[0])continue;const p=r[0].toString();if(p.startsWith('Semana ')){semAtual=parseInt(p.replace('Semana ',''))||(semAtual+1);continue;}if(i<3)continue;const cm=parseNum(r[9]);if(cm==null)continue;if(!mapa[r[0]])mapa[r[0]]=[];mapa[r[0]].push({semana:semAtual,cargaMedia:cm});}return mapa;}
+    const treinoAReg=parseTreinoFixo(dados.treinoA);const treinoBReg=parseTreinoFixo(dados.treinoB);const treinoCReg=parseTreinoFixo(dados.treinoC);
+    const treinoAEvo=parseTreinoEvolucao(dados.treinoA);const treinoBEvo=parseTreinoEvolucao(dados.treinoB);const treinoCEvo=parseTreinoEvolucao(dados.treinoC);
+    const medidasReg=[];const medidasRaw=dados.medidas||[];
+    for(let i=3;i<medidasRaw.length;i++){const r=medidasRaw[i];if(!r[0]||r[0]==='')continue;const data=parseData(r[0]);if(!data)continue;medidasReg.push({data,cintura:parseNum(r[1]),quadril:parseNum(r[2]),braco:parseNum(r[3]),coxa:parseNum(r[4]),abdomen:parseNum(r[5]),peito:parseNum(r[6])});}
+    medidasReg.sort((a,b)=>a.data-b.data);
+    const ult7=Array.from({length:7},(_,i)=>{const d=new Date(hj);d.setDate(hj.getDate()-(6-i));return{data:d,reg:regs.find(r=>mesmoDia(r.data,d))||null};});
+    const ult14=Array.from({length:14},(_,i)=>{const d=new Date(hj);d.setDate(hj.getDate()-(13-i));return{data:d,reg:regs.find(r=>mesmoDia(r.data,d))||null};});
+    const refHoje=refs.filter(r=>mesmoDia(r.data,hj));
+    const semanasDetalhe=computeSemanasDetalhe(regs,hj);
+    const prList=computePRExercicios(treinoAEvo,treinoBEvo,treinoCEvo);
+    const rankingEvo=computeRankingEvolucao(treinoAEvo,treinoBEvo,treinoCEvo);
+    renderCentroControle(regHoje,regs,ult7,refHoje,hj);
+    renderScore(regHoje,regs,ult7,hj);
+    renderTirzeSide(regs,ult7,hj);
+    renderAlertas(regHoje,ult7,ult14,regs,hj,medidasReg);
+    renderPeso(regs);
+    renderPrevisoes(regs,semanasDetalhe,cardioReg);
+    renderChecklists(regHoje,ult7,refHoje,hj);
+    renderRanking(rankingEvo);
+    renderPR(prList);
+    renderTreinos(ult7,hj);
+    renderCardio(cardioReg,hj);
+    renderCarga(treinoAReg,treinoBReg,treinoCReg);
+    renderEvolucaoCarga(treinoAEvo,treinoBEvo,treinoCEvo);
+    renderRefs(refHoje,hj);
+    renderBarras(ult14);
+    renderHumor(regs);
+    renderTirzepatida(regs,ult7,hj);
+    renderTimeline(regs,semanasDetalhe,medidasReg,hj);
+    renderMedidas(medidasReg);
+    renderSemanal(semanasDetalhe);
+    renderVitorias(regs,hj,semanasDetalhe,prList,medidasReg);
+    renderExames();
+    renderInsights(semanasDetalhe,cardioReg,treinoAEvo,treinoBEvo,treinoCEvo);
+    const prioridades=computePrioridades(regHoje,ult7,ult14,regs,hj,medidasReg);
+    renderPrioridades(prioridades);
+    renderBomDia(regs,hj,prioridades);
+    renderProjecaoCarga(treinoAEvo,treinoBEvo,treinoCEvo);
+    renderPadraoTirze(regs,hj);
+    document.getElementById('upd').textContent='Atualizado '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  }catch(e){console.error(e);document.getElementById('upd').textContent='Erro — verifique conexão';}
+  document.getElementById('loading').style.display='none';
+}
+function calcScoreWindow(todos,diasWindow){
+  const ultimoDiaComReg=diasWindow.slice().reverse().find(d=>d.reg);
+  const pesoRef=ultimoDiaComReg?.reg?.peso??todos.filter(r=>r.peso&&r.data<=diasWindow[diasWindow.length-1].data).slice(-1)[0]?.peso;
+  const pctPeso=pesoRef!=null?clamp(((95-pesoRef)/15)*100):0;
+  const prots=diasWindow.map(d=>d.reg?.prot).filter(v=>v!=null&&v>5);
+  const mediaProt=prots.length?media(prots):null;
+  const pctProt=mediaProt!=null?clamp((mediaProt/120)*100):0;
+  const aguas=diasWindow.map(d=>d.reg?.agua).filter(v=>v!=null&&v>0);
+  const mediaAgua=aguas.length?media(aguas):null;
+  const pctAgua=mediaAgua!=null?clamp((mediaAgua/2500)*100):0;
+  const treinos=diasWindow.filter(d=>isTreinoRealizado(d.reg?.treino)).length;
+  const pctTreino=clamp((treinos/3)*100);
+  const score=Math.round(pctPeso*.4+pctProt*.25+pctAgua*.2+pctTreino*.15);
+  const aderencia=Math.round(pctProt*.45+pctAgua*.3+pctTreino*.25);
+  return{score,pctPeso,pctProt,pctAgua,pctTreino,mediaProt,mediaAgua,treinos,pesoRef,aderencia};
+}
+function calcScore(regHoje,todos,ult7){
+  const r=calcScoreWindow(todos,ult7);
+  return{...r,pesoHoje:regHoje?.peso??r.pesoRef};
+}
+function janelaDias(todos,hj,offsetIni,offsetFim){
+  return Array.from({length:offsetFim-offsetIni+1},(_,i)=>{const d=new Date(hj);d.setDate(hj.getDate()-(offsetFim-(offsetIni+i)));return{data:d,reg:todos.find(r=>mesmoDia(r.data,d))||null};});
+}
+function calcTrendBadge(todos,hj){
+  const ult7=janelaDias(todos,hj,0,6);
+  const prev7=janelaDias(todos,hj,7,13);
+  const temHistoricoPrev=todos.some(r=>r.data<=prev7[6].data);
+  if(!temHistoricoPrev)return{insuf:true};
+  const sAtual=calcScoreWindow(todos,ult7).score;
+  const sAnt=calcScoreWindow(todos,prev7).score;
+  const delta=sAtual-sAnt;
+  let cls,txt;
+  if(delta>=10){cls='great';txt='⬆ Excelente ('+(delta>0?'+':'')+delta+' pts)';}
+  else if(delta>=3){cls='good';txt='⬆ Bom ('+(delta>0?'+':'')+delta+' pts)';}
+  else if(delta>-3){cls='flat';txt='→ Estável ('+(delta>0?'+':'')+delta+' pts)';}
+  else{cls='down';txt='⬇ Atenção ('+delta+' pts)';}
+  return{insuf:false,delta,cls,txt,sAtual,sAnt};
+}
+function calcTrend30(todos,hj){
+  const ult15=janelaDias(todos,hj,0,14);
+  const prev15=janelaDias(todos,hj,15,29);
+  const temHistoricoPrev=todos.some(r=>r.data<=prev15[14].data);
+  if(!temHistoricoPrev)return{insuf:true};
+  const sAtual=calcScoreWindow(todos,ult15).score;
+  const sAnt=calcScoreWindow(todos,prev15).score;
+  return{insuf:false,delta:sAtual-sAnt};
+}
+function computeSemanasDetalhe(regs,hj){
+  const ini=new Date(PROTOCOLO_INICIO);const semanas=[];let s=new Date(ini);
+  for(let w=1;w<=30;w++){
+    const fim=new Date(s);fim.setDate(fim.getDate()+6);if(s>hj)break;
+    const dias=regs.filter(r=>r.data>=s&&r.data<=fim);
+    const comPesoAte=regs.filter(r=>r.peso&&r.data<=fim);
+    const pesoFim=comPesoAte.length?comPesoAte[comPesoAte.length-1].peso:null;
+    const comPesoAntes=regs.filter(r=>r.peso&&r.data<s);
+    const pesoIniBase=comPesoAntes.length?comPesoAntes[comPesoAntes.length-1].peso:null;
+    const comPesoNaSemana=dias.filter(r=>r.peso);
+    const pesoIni=pesoIniBase??(comPesoNaSemana.length?comPesoNaSemana[0].peso:null);
+    if(!dias.length){s.setDate(s.getDate()+7);continue;}
+    const mp=media(dias.map(d=>d.prot).filter(Boolean));
+    const ma=media(dias.map(d=>d.agua).filter(Boolean));
+    const tr=dias.filter(d=>isTreinoRealizado(d.treino)).length;
+    const deltaPeso=(pesoFim!=null&&pesoIni!=null)?+(pesoFim-pesoIni).toFixed(2):null;
+    semanas.push({w,ini:new Date(s),fim:new Date(fim),mp,ma,tr,pesoIni,pesoFim,deltaPeso});
+    s.setDate(s.getDate()+7);
+  }
+  return semanas;
+}
+function computePRExercicios(treinoAEvo,treinoBEvo,treinoCEvo){
+  const combos=[{id:'ht',nome:'Hip Thrust Máquina',evo:{...treinoAEvo,...treinoBEvo,...treinoCEvo}},{id:'bs',nome:'Belt Squat',evo:treinoAEvo},{id:'st',nome:'Stiff Barra Olímpica',evo:treinoBEvo}];
+  return combos.map(ex=>{
+    const pontos=ex.evo[ex.nome];
+    if(!pontos||!pontos.length)return{...ex,semDados:true};
+    const sorted=pontos.slice().sort((a,b)=>a.semana-b.semana);
+    const maximo=Math.max(...sorted.map(p=>p.cargaMedia));
+    const ultimo=sorted[sorted.length-1].cargaMedia;
+    const anterior=sorted.length>1?sorted[sorted.length-2].cargaMedia:null;
+    const ehPR=ultimo>=maximo&&sorted.length>1;
+    return{...ex,ultimo,anterior,maximo,ehPR,semDados:false};
+  });
+}
+function computeRankingEvolucao(treinoAEvo,treinoBEvo,treinoCEvo){
+  const grupos=[{g:'A',mapa:treinoAEvo},{g:'B',mapa:treinoBEvo},{g:'C',mapa:treinoCEvo}];
+  const out=[];
+  grupos.forEach(gr=>{
+    Object.entries(gr.mapa).forEach(([nome,pontos])=>{
+      if(pontos.length<2)return;
+      const sorted=pontos.slice().sort((a,b)=>a.semana-b.semana);
+      const primeiro=sorted[0].cargaMedia;const ultimo=sorted[sorted.length-1].cargaMedia;
+      out.push({nome,grupo:gr.g,delta:+(ultimo-primeiro).toFixed(1),primeiro,ultimo,semanas:sorted.length});
+    });
+  });
+  return out.sort((a,b)=>b.delta-a.delta);
+}
+function regressaoLinear(pts){
+  const n=pts.length;if(n<2)return null;
+  const sx=pts.reduce((s,p)=>s+p.x,0),sy=pts.reduce((s,p)=>s+p.y,0);
+  const sxy=pts.reduce((s,p)=>s+p.x*p.y,0),sxx=pts.reduce((s,p)=>s+p.x*p.x,0);
+  const denom=(n*sxx-sx*sx)||1e-9;
+  const slope=(n*sxy-sx*sy)/denom;
+  const intercept=(sy-slope*sx)/n;
+  const meanY=sy/n;
+  const ssTot=pts.reduce((s,p)=>s+Math.pow(p.y-meanY,2),0);
+  const ssRes=pts.reduce((s,p)=>s+Math.pow(p.y-(slope*p.x+intercept),2),0);
+  const r2=ssTot>0?1-(ssRes/ssTot):0;
+  return{slope,intercept,r2};
+}
+function renderCentroControle(regHoje,regs,ult7,refHoje,hj){
+  const{score,pesoHoje}=calcScore(regHoje,regs,ult7);
+  document.getElementById('cc-score').textContent=score;
+  document.getElementById('cc-peso').textContent=pesoHoje!=null?pesoHoje.toFixed(1)+'kg':'—';
+  document.getElementById('cc-faltam').textContent=pesoHoje!=null?Math.max(0,+(pesoHoje-80).toFixed(1))+'kg':'—';
+  const comPeso=regs.filter(r=>r.peso).slice(-21);
+  let previsaoTxt='—';
+  if(comPeso.length>=4){
+    const d0=comPeso[0].data;
+    const pts=comPeso.map(r=>({x:(r.data-d0)/864e5,y:r.peso}));
+    const reg=regressaoLinear(pts);
+    if(reg&&reg.slope<-0.005){
+      const ultimoX=pts[pts.length-1].x;
+      const pesoProjetado=reg.slope*ultimoX+reg.intercept;
+      const diasParaMeta=Math.round((pesoProjetado-80)/(-reg.slope));
+      const dataMeta=new Date(comPeso[comPeso.length-1].data);dataMeta.setDate(dataMeta.getDate()+diasParaMeta);
+      previsaoTxt=dataMeta.toLocaleDateString('pt-BR');
+    }else previsaoTxt='Sem tendência';
+  }else previsaoTxt='Dados insuf.';
+  document.getElementById('cc-previsao').textContent=previsaoTxt;
+  const protHoje=regHoje?.prot??(refHoje.length?refHoje.reduce((s,r)=>s+r.prot,0):null);
+  const aguaHoje=regHoje?.agua??null;
+  const treinoOk=isTreinoRealizado(regHoje?.treino);
+  const{prox}=calcAplicacao(hj);
+  const diasAplic=Math.ceil((prox-hj)/864e5);
+  const items=[
+    {ico:'⚖️',lbl:'Peso',val:regHoje?.peso!=null?'Feito':'Pendente',cls:regHoje?.peso!=null?'ok':'bad'},
+    {ico:'🥩',lbl:'Proteína',val:protHoje!=null?Math.round(protHoje)+'/120g':'0/120g',cls:protHoje!=null&&protHoje>=120?'ok':protHoje!=null&&protHoje>=70?'warn':'bad'},
+    {ico:'💧',lbl:'Água',val:aguaHoje!=null?Math.round(aguaHoje)+'ml':'0ml',cls:aguaHoje!=null&&aguaHoje>=2500?'ok':aguaHoje!=null&&aguaHoje>=1500?'warn':'bad'},
+    {ico:'💪',lbl:'Treino',val:treinoOk?'Feito':'Pendente',cls:treinoOk?'ok':'warn'},
+    {ico:'💉',lbl:'Aplicação',val:diasAplic===0?'Hoje!':diasAplic+'d',cls:diasAplic===0?'ok':diasAplic<=1?'warn':'ok'}
+  ];
+  document.getElementById('cc-check-row').innerHTML=items.map(i=>`<div class="cc-check-item ${i.cls}"><div class="cc-check-ico">${i.ico}</div><div class="cc-check-lbl">${i.lbl}</div><div class="cc-check-val">${i.val}</div></div>`).join('');
+}
+function renderScore(regHoje,todos,ult7,hj){
+  const{score,aderencia,pctPeso}=calcScore(regHoje,todos,ult7);
+  const el=document.getElementById('score-num');
+  el.textContent=score;
+  let cor='var(--dourado)',status='';
+  if(score>=80){cor='var(--verde)';status='Excelente';}
+  else if(score>=60){cor='var(--dourado)';status='Bom ritmo';}
+  else if(score>=40){cor='var(--amarelo)';status='Atenção';}
+  else{cor='var(--alerta)';status='Crítico';}
+  el.style.color=cor;
+  document.getElementById('score-status').textContent=status;
+  document.getElementById('score-status').style.color=cor;
+  const estrelas=Math.round(clamp(score)/20);
+  document.getElementById('score-stars').innerHTML='★'.repeat(estrelas)+'<span style="color:var(--borda)">'+'★'.repeat(5-estrelas)+'</span>';
+  const resultado=Math.round(pctPeso);
+  document.getElementById('duo-resultado').textContent=resultado+'%';
+  document.getElementById('duo-resultado-bar').style.width=resultado+'%';
+  document.getElementById('duo-aderencia').textContent=aderencia+'%';
+  document.getElementById('duo-aderencia-bar').style.width=aderencia+'%';
+  const tb=calcTrendBadge(todos,hj);
+  const badgeEl=document.getElementById('trend-badge');
+  if(tb.insuf){badgeEl.className='trend-badge flat';badgeEl.textContent='Dados insuficientes p/ tendência';}
+  else{
+    const t30=calcTrend30(todos,hj);
+    const suf30=t30.insuf?'':' · 30d: '+(t30.delta>0?'+':'')+t30.delta+' pts';
+    badgeEl.className='trend-badge '+tb.cls;badgeEl.textContent=tb.txt+suf30;
+  }
+}
+function renderTirzeSide(regs,ult7,hj){
+  const sem=Math.floor((hj-PROTOCOLO_INICIO)/(7*864e5))+1;
+  const rodizio=['Abdômen D','Abdômen E','Coxa D','Coxa E','Braço D','Braço E'];
+  document.getElementById('ts-semana-local').textContent='S'+sem+' · '+rodizio[(sem-1)%rodizio.length];
+  const{prox}=calcAplicacao(hj);
+  const diasProx=Math.ceil((prox-hj)/864e5);
+  document.getElementById('ts-prox').textContent=diasProx===0?'Hoje!':'em '+diasProx+'d';
+  const comPeso=regs.filter(r=>r.peso);
+  document.getElementById('ts-perdido').textContent=comPeso.length>=2?('-'+Math.abs(comPeso[0].peso-comPeso[comPeso.length-1].peso).toFixed(1)+'kg'):'—';
+}
+function calcStreak(ultN,campo,condFn){
+  let streak=0;
+  for(let i=ultN.length-1;i>=0;i--){
+    const d=ultN[i];if(d.data>hoje())continue;
+    const v=d.reg?.[campo];
+    if(v==null)break;
+    if(condFn(v))streak++;else break;
+  }
+  return streak;
+}
+function renderAlertas(regHoje,ult7,ult14,todos,hj,medidasReg){
+  const{mediaProt,mediaAgua,treinos}=calcScore(regHoje,todos,ult7);
+  const ins=[];
+  if(!mediaProt)ins.push({t:'warn',i:'🥩',h:'Proteína Sem Registro',p:'Nenhum dado de proteína nos últimos 7 dias. Sem proteína registrada, o protocolo corre risco.',a:'→ Preencha o Diário do Dia'});
+  else if(mediaProt<70)ins.push({t:'bad',i:'🚨',h:'RISCO MUSCULAR — PROTEÍNA CRÍTICA',p:'Média de '+Math.round(mediaProt)+'g/dia na semana. Abaixo de 70g causa catabolismo muscular junto com gordura. AÇÃO IMEDIATA necessária.',a:'→ Whey + ovo + frango AGORA'});
+  else if(mediaProt<120)ins.push({t:'warn',i:'🥩',h:'Proteína Abaixo da Meta',p:'Média de '+Math.round(mediaProt)+'g/dia — faltam '+Math.round(120-mediaProt)+'g. Comprometimento da massa muscular.',a:'→ Adicionar whey pós-treino'});
+  else ins.push({t:'good',i:'🥩',h:'Proteína em Dia',p:'Média de '+Math.round(mediaProt)+'g/dia. Massa muscular protegida durante o emagrecimento.',a:'→ Manter esse padrão'});
+  const streakProt=calcStreak(ult14,'prot',v=>v<120);
+  if(streakProt>=3)ins.push({t:'warn',i:'📉',h:'Proteína Abaixo da Meta há '+streakProt+' Dias Seguidos',p:'Não é um dia isolado — é uma tendência. '+streakProt+' dias consecutivos abaixo de 120g.',a:'→ Revisar plano alimentar da semana'});
+  if(treinos===0)ins.push({t:'bad',i:'💪',h:'SEM TREINOS ESTA SEMANA',p:'Nenhum treino registrado. A Tirzepatida sem estímulo muscular provoca perda de músculo junto com gordura.',a:'→ Treinar HOJE'});
+  else if(treinos<3)ins.push({t:'warn',i:'💪',h:treinos+'/3 Treinos na Semana',p:'Faltam '+(3-treinos)+' treino(s). Complete para preservar composição corporal.',a:'→ Agendar os próximos treinos'});
+  else ins.push({t:'good',i:'💪',h:'Meta de Treinos Completa',p:'3 treinos esta semana. Estímulo muscular adequado para o protocolo.',a:'→ Manter na próxima semana'});
+  const prev7=janelaDias(todos,hj,7,13);
+  const treinosPrev=prev7.filter(d=>isTreinoRealizado(d.reg?.treino)).length;
+  if(treinosPrev>0&&treinos<treinosPrev*.6)ins.push({t:'warn',i:'📉',h:'Frequência de Treino Caiu',p:'Semana anterior: '+treinosPrev+' treino(s). Esta semana: '+treinos+'. Queda relevante no volume de estímulo.',a:'→ Entender o motivo da queda'});
+  if(!mediaAgua)ins.push({t:'warn',i:'💧',h:'Água Sem Registro',p:'Hidratação não registrada. Desidratação piora náuseas da Tirzepatida.',a:'→ Registrar consumo de água'});
+  else if(mediaAgua<2000)ins.push({t:'bad',i:'💧',h:'DESIDRATAÇÃO — NÍVEL CRÍTICO',p:'Média de '+Math.round(mediaAgua)+'ml/dia. Potencializa náusea e reduz metabolismo. Meta mínima: 2L.',a:'→ Aumentar água imediatamente'});
+  else if(mediaAgua<2500)ins.push({t:'warn',i:'💧',h:'Hidratação Parcial',p:'Faltam '+Math.round(2500-mediaAgua)+'ml para a meta. Hidratação completa acelera resultados.',a:'→ Mais uma garrafinha por dia'});
+  else ins.push({t:'good',i:'💧',h:'Hidratação Perfeita',p:'Média de '+Math.round(mediaAgua)+'ml/dia. Potencializa o protocolo.',a:'→ Manter esse padrão'});
+  const comPeso=todos.filter(r=>r.peso).slice(-10);
+  if(comPeso.length>=4){
+    const ultimo=comPeso[comPeso.length-1].peso;
+    let estavelDesde=comPeso[comPeso.length-1].data;
+    for(let i=comPeso.length-2;i>=0;i--){if(Math.abs(comPeso[i].peso-ultimo)<.3)estavelDesde=comPeso[i].data;else break;}
+    const diasEstavel=Math.round((comPeso[comPeso.length-1].data-estavelDesde)/864e5);
+    if(diasEstavel>=10)ins.push({t:'warn',i:'⚖️',h:'Peso Estável há '+diasEstavel+' Dias',p:'Variação menor que 300g nos últimos '+diasEstavel+' dias. Pode ser retenção, platô real ou falta de déficit — vale revisar.',a:'→ Conferir adesão e considerar reavaliação'});
+  }
+  if(medidasReg.length>=2){
+    const p=medidasReg[0],u=medidasReg[medidasReg.length-1];
+    if(p.cintura!=null&&u.cintura!=null&&(p.cintura-u.cintura)>=1)ins.push({t:'good',i:'📏',h:'Cintura em Queda',p:'Redução de '+(p.cintura-u.cintura).toFixed(1)+'cm desde a primeira medição — mesmo que o peso oscile, a composição está mudando.',a:'→ Continuar o protocolo'});
+  }
+  document.getElementById('alertas-wrap').innerHTML=ins.map(i=>`<div class="alerta-item ${i.t}"><div class="alerta-ico">${i.i}</div><div class="alerta-body"><h4>${i.h}</h4><p>${i.p}</p><span class="alerta-acao">${i.a}</span></div></div>`).join('');
+}
+function renderChecklists(regHoje,ult7,refHoje,hj){
+  const protHoje=regHoje?.prot??(refHoje.length?refHoje.reduce((s,r)=>s+r.prot,0):null);
+  const aguaHoje=regHoje?.agua??null;
+  const treinoOk=isTreinoRealizado(regHoje?.treino);
+  const cardioHoje=regHoje?.treino&&regHoje.treino.toLowerCase().includes('cardio');
+  const treinoItems=[
+    {txt:'Treino do dia (A/B/C)',done:treinoOk,sub:treinoOk?regHoje.treino:'Ainda não treinou hoje'},
+    {txt:'Cardio',done:!!cardioHoje,sub:cardioHoje?'Feito':'Opcional — não feito hoje'},
+    {txt:'Peso registrado',done:regHoje?.peso!=null,sub:regHoje?.peso!=null?regHoje.peso.toFixed(1)+'kg':'Sem registro'}
+  ];
+  document.getElementById('check-treino').innerHTML=treinoItems.map(i=>`<div class="check-item"><div class="check-box ${i.done?'done':'pending'}">${i.done?'✓':''}</div><div><div class="check-txt">${i.txt}</div><div class="check-sub">${i.sub}</div></div></div>`).join('');
+  const nutriItems=[
+    {txt:'120g de proteína',done:protHoje!=null&&protHoje>=120,sub:protHoje!=null?Math.round(protHoje)+'/120g':'Sem registro'},
+    {txt:'2.500ml de água',done:aguaHoje!=null&&aguaHoje>=2500,sub:aguaHoje!=null?Math.round(aguaHoje)+'/2500ml':'Sem registro'}
+  ];
+  document.getElementById('check-nutricao').innerHTML=nutriItems.map(i=>`<div class="check-item"><div class="check-box ${i.done?'done':'pending'}">${i.done?'✓':''}</div><div><div class="check-txt">${i.txt}</div><div class="check-sub">${i.sub}</div></div></div>`).join('');
+}
+function renderRanking(rankingEvo){
+  if(!rankingEvo.length){document.getElementById('rank-grid').innerHTML='<div style="color:var(--texto2);font-size:11px;text-align:center;padding:12px">Preencha ao menos 2 semanas de carga em algum exercício pra gerar o ranking</div>';return;}
+  const medals=['🥇','🥈','🥉'];
+  document.getElementById('rank-grid').innerHTML=rankingEvo.slice(0,8).map((r,idx)=>`<div class="rank-item"><div class="rank-medal">${medals[idx]||'▪️'}</div><div class="rank-info"><div class="rank-nome">${r.nome} <span style="color:var(--texto2);font-weight:400;">(Treino ${r.grupo})</span></div><div class="rank-sub">${r.primeiro.toFixed(1)}kg → ${r.ultimo.toFixed(1)}kg em ${r.semanas} semanas</div></div><div class="rank-delta">${r.delta>0?'+':''}${r.delta}kg</div></div>`).join('');
+}
+function renderPR(prList){
+  const idMap={ht:'hipthrust',bs:'beltsquat',st:'stiff'};
+  prList.forEach(ex=>{
+    const elC=document.getElementById('pr-'+ex.id+'-carga');
+    const elB=document.getElementById('pr-'+ex.id+'-badge');
+    const elCard=document.getElementById('pr-'+idMap[ex.id]);
+    if(ex.semDados){elC.innerHTML='—<span class="pr-unit">kg</span>';elB.className='pr-badge sem';elB.textContent='Sem dados ainda';return;}
+    elC.innerHTML=ex.ultimo.toFixed(1)+'<span class="pr-unit">kg</span>';
+    if(ex.ehPR){elCard.classList.add('pr-record');elB.className='pr-badge record';elB.textContent='🏆 PR — recorde pessoal';}
+    else if(ex.anterior!=null){const delta=ex.ultimo-ex.anterior;if(delta>0){elB.className='pr-badge up';elB.textContent='▲ +'+delta.toFixed(1)+'kg vs semana anterior';}else if(delta<0){elB.className='pr-badge flat';elB.textContent='▼ '+delta.toFixed(1)+'kg vs semana anterior';}else{elB.className='pr-badge flat';elB.textContent='→ Estável';}}
+    else{elB.className='pr-badge flat';elB.textContent='Primeira semana registrada';}
+  });
+}
+function renderTreinos(ult7,hj){
+  const ls=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  document.getElementById('treino-per').textContent=ult7[0].data.toLocaleDateString('pt-BR')+' – '+ult7[6].data.toLocaleDateString('pt-BR');
+  document.getElementById('tsem').innerHTML=ult7.map(d=>{const fut=d.data>hj;const tr=d.reg?.treino||'';const ok=isTreinoRealizado(tr);const cls=fut?'fut':ok?'ok':'rest';const tipo=ok?(tr.includes('Cardio')?'Ca':tr.includes('Avulso')?'Av':tr.replace('Treino ','')):fut?'·':'D';return`<div class="tdia ${cls}"><div class="tdia-l">${ls[d.data.getDay()]}</div><div>${tipo}</div></div>`;}).join('');
+  const ct=ult7.filter(d=>isTreinoRealizado(d.reg?.treino)).length;
+  const msg=document.getElementById('treino-msg');
+  if(ct===0)msg.innerHTML='<div style="font-size:10px;color:var(--alerta);background:var(--alerta-bg);padding:8px;border-radius:6px;border:1px solid var(--alerta);margin-top:8px;">⚠️ Nenhum treino esta semana</div>';
+  else if(ct<3)msg.innerHTML=`<div style="font-size:10px;color:var(--amarelo);background:var(--amarelo-bg);padding:8px;border-radius:6px;border:1px solid var(--amarelo);margin-top:8px;">⚡ ${ct}/3 · Faltam ${3-ct}</div>`;
+  else msg.innerHTML='<div style="font-size:10px;color:var(--verde);background:var(--verde-bg);padding:8px;border-radius:6px;border:1px solid var(--verde);margin-top:8px;">✅ Meta semanal atingida!</div>';
+}
+function renderCardio(cardioReg,hj){
+  const s7=new Date(hj);s7.setDate(hj.getDate()-6);
+  const rec=cardioReg.filter(c=>c.data>=s7&&c.data<=hj).sort((a,b)=>b.data-a.data);
+  document.getElementById('cardio-min').textContent=rec.reduce((s,c)=>s+c.duracao,0)||'—';
+  document.getElementById('cardio-km').textContent=rec.reduce((s,c)=>s+c.distancia,0)?rec.reduce((s,c)=>s+c.distancia,0).toFixed(1):'—';
+  document.getElementById('cardio-cal').textContent=rec.reduce((s,c)=>s+c.calorias,0)||'—';
+  document.getElementById('cardio-lista').innerHTML=rec.slice(0,3).map(c=>`<div class="ref-row"><span class="ref-nome">${c.data.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})} · ${c.tipo}${c.intensidade?' ('+c.intensidade+')':''}</span><span class="ref-val">${c.duracao}min</span></div>`).join('')||'<div style="color:var(--texto2);font-size:11px;text-align:center;padding:8px">Sem cardio registrado</div>';
+}
+function renderCarga(treinoAReg,treinoBReg,treinoCReg){
+  const grupos=[{nome:'Treino A',itens:treinoAReg},{nome:'Treino B',itens:treinoBReg},{nome:'Treino C',itens:treinoCReg}];
+  let html='';let tem=false;
+  grupos.forEach(g=>{if(!g.itens.length)return;tem=true;html+=`<div style="font-size:9px;color:var(--dourado);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:8px 0 4px;opacity:.8">${g.nome}</div>`;g.itens.forEach(it=>{html+=`<div class="carga-ex"><span class="carga-ex-nome">${it.exercicio}</span><span class="carga-ex-val">${it.cargaMedia.toFixed(1)}kg</span></div>`;});});
+  document.getElementById('carga-lista').innerHTML=tem?html:'<div style="color:var(--texto2);font-size:11px;text-align:center;padding:12px">Preencha cargas na planilha</div>';
+}
+function renderEvolucaoCarga(mapaA,mapaB,mapaC){
+  const grupos=[{nome:'A',mapa:mapaA},{nome:'B',mapa:mapaB},{nome:'C',mapa:mapaC}];
+  let html='';let tem=false;
+  grupos.forEach(g=>{
+    const nomes=Object.keys(g.mapa).filter(n=>g.mapa[n].length>1);
+    if(!nomes.length)return;tem=true;
+    html+=`<div style="font-size:9px;color:var(--dourado);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:8px 0 4px;opacity:.8">Treino ${g.nome}</div>`;
+    nomes.forEach(nome=>{
+      const pontos=g.mapa[nome].slice().sort((a,b)=>a.semana-b.semana);
+      const vals=pontos.map(p=>p.cargaMedia);
+      const max=Math.max(...vals);const min=Math.min(...vals);
+      const ultimo=vals[vals.length-1];const primeiro=vals[0];
+      const delta=primeiro?((ultimo-primeiro)/primeiro*100).toFixed(1):0;
+      const cor=delta>0?'var(--verde)':delta<0?'var(--alerta)':'var(--texto2)';
+      const sinal=delta>0?'+':'';
+      const barW=16,gap=3,baseH=28;const svgW=pontos.length*(barW+gap);
+      let bars='';
+      pontos.forEach((p,idx)=>{const h=max>min?((p.cargaMedia-min)/(max-min))*(baseH-4)+4:baseH/2;const x=idx*(barW+gap);const y=baseH-h;const isLast=idx===pontos.length-1;bars+=`<rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="2" fill="${isLast?'var(--dourado)':'rgba(224,69,122,.3)'}"></rect>`;});
+      html+=`<div class="evo-item"><div class="evo-header"><span class="evo-nome">${nome}</span><div class="evo-vals"><div class="evo-carga">${ultimo.toFixed(1)}kg</div><div class="evo-delta" style="color:${cor}">${sinal}${delta}%</div></div></div><svg width="${svgW}" height="${baseH}">${bars}</svg></div>`;
+    });
+  });
+  document.getElementById('evolucao-carga-lista').innerHTML=tem?html:'<div style="color:var(--texto2);font-size:11px;text-align:center;padding:8px">Preencha 2 semanas para ver progressão</div>';
+}
+function renderRefs(refs,hj){
+  document.getElementById('ref-sub').textContent=hj.toLocaleDateString('pt-BR')+' · '+refs.length+' itens';
+  if(!refs.length){document.getElementById('ref-lista').innerHTML='<div style="color:var(--texto2);font-size:11px;text-align:center;padding:12px">Sem refeições registradas hoje</div>';return;}
+  const grupos={};refs.forEach(r=>{if(!grupos[r.refeicao])grupos[r.refeicao]={prot:0,kcal:0};grupos[r.refeicao].prot+=r.prot;grupos[r.refeicao].kcal+=r.kcal;});
+  const emos={'Cafe da manha':'☀️','Lanche manha':'🍎','Almoco':'🍽️','Lanche tarde':'🌿','Jantar':'🌙','Ceia':'🌛','Pre-treino':'⚡','Pos-treino':'💪'};
+  document.getElementById('ref-lista').innerHTML=Object.entries(grupos).map(([ref,d])=>`<div class="ref-row"><span class="ref-nome">${emos[ref]||'🍴'} ${ref}</span><span class="ref-val">${d.prot.toFixed(0)}g</span></div>`).join('');
+  const tp=refs.reduce((s,r)=>s+r.prot,0);const tc=refs.reduce((s,r)=>s+r.carbo,0);const tg=refs.reduce((s,r)=>s+r.gord,0);const tk=refs.reduce((s,r)=>s+r.kcal,0);const tot=tp+tc+tg||1;
+  document.getElementById('m-p').textContent=tp.toFixed(0)+'g';document.getElementById('m-c').textContent=tc.toFixed(0)+'g';document.getElementById('m-g').textContent=tg.toFixed(0)+'g';document.getElementById('m-k').textContent=tk.toFixed(0);
+  document.getElementById('macro-bar').innerHTML=`<div style="width:${(tp/tot)*100}%;background:#e0457a"></div><div style="width:${(tc/tot)*100}%;background:#4d8fd1"></div><div style="width:${(tg/tot)*100}%;background:#232b3a"></div>`;
+}
+function renderPeso(regs){
+  const comPeso=regs.filter(r=>r.peso).slice(-60);
+  if(comPeso.length<1)return;
+  document.getElementById('peso-placeholder').textContent='';
+  const minP=70,maxP=96,x0=44,svgW=471,y0=15,yMax=130;
+  const dataInicio=new Date(2026,5,14);const dataMetaDez=new Date(2026,11,1);
+  const dataUltimoPeso=comPeso[comPeso.length-1].data;const dataPrimeiroPeso=comPeso[0].data;
+  const diasDesde=(dataUltimoPeso-dataInicio)/864e5;
+  const spanTotal=Math.min(Math.max(21,diasDesde+7),(dataMetaDez-dataInicio)/864e5);
+  const metaDezVisivel=dataMetaDez<=new Date(dataInicio.getTime()+spanTotal*864e5);
+  function px(data){return x0+((data-dataInicio)/864e5/spanTotal)*svgW;}
+  function py(p){return yMax-((p-minP)/(maxP-minP))*(yMax-y0);}
+  const pts=comPeso.map(r=>`${px(r.data)},${py(r.peso)}`).join(' ');
+  const areaPts=comPeso.map(r=>`${px(r.data)},${py(r.peso)}`).join(' ')+` ${px(dataUltimoPeso)},${yMax} ${px(dataPrimeiroPeso)},${yMax}`;
+  document.getElementById('linha-peso').setAttribute('points',pts);
+  document.getElementById('area-peso').setAttribute('points',areaPts);
+  let ultX=-999;
+  document.getElementById('pts-peso').innerHTML=comPeso.map(r=>{const x=px(r.data),y=py(r.peso);const show=(x-ultX)>=26;if(show)ultX=x;return`<circle cx="${x}" cy="${y}" r="3" fill="#e0457a"/>`+(show?`<text x="${x}" y="${y-6}" fill="#e0457a" font-size="8" text-anchor="middle">${r.peso.toFixed(1)}</text>`:'');}).join('');
+  if(comPeso.length>=3){
+    const mm=comPeso.map((r,i,arr)=>{const janela=arr.slice(Math.max(0,i-6),i+1);return{data:r.data,mm:media(janela.map(x=>x.peso))};});
+    document.getElementById('media-movel-line').setAttribute('points',mm.map(m=>`${px(m.data)},${py(m.mm)}`).join(' '));
+  }else document.getElementById('media-movel-line').setAttribute('points','');
+  const ult=comPeso[comPeso.length-1];const xUlt=px(ult.data),yUlt=py(ult.peso);
+  if(metaDezVisivel){const xDez=px(dataMetaDez),yDez=py(85);document.getElementById('proj-line').setAttribute('points',`${xUlt},${yUlt} ${xDez},${yDez}`);document.getElementById('proj-line').setAttribute('opacity','.5');document.getElementById('marco-dez').setAttribute('cx',xDez);document.getElementById('marco-dez').setAttribute('cy',yDez);document.getElementById('marco-dez').setAttribute('opacity','1');document.getElementById('marco-dez-txt').setAttribute('x',Math.min(Math.max(xDez,75),475));document.getElementById('marco-dez-txt').setAttribute('y',yDez-6);document.getElementById('marco-dez-txt').setAttribute('opacity','1');}
+  else{document.getElementById('proj-line').setAttribute('opacity','0');document.getElementById('marco-dez').setAttribute('opacity','0');document.getElementById('marco-dez-txt').setAttribute('opacity','0');}
+  const y80=py(80);document.getElementById('linha-meta-80').setAttribute('y1',y80);document.getElementById('linha-meta-80').setAttribute('y2',y80);document.getElementById('txt-meta-80').setAttribute('y',y80-4);
+  const y72=py(72);document.getElementById('linha-meta-final').setAttribute('y1',y72);document.getElementById('linha-meta-final').setAttribute('y2',y72);document.getElementById('txt-meta-final').setAttribute('y',y72-4);
+}
+function renderPrevisoes(regs,semanasDetalhe,cardioReg){
+  const cards=[];
+  const comPeso=regs.filter(r=>r.peso).slice(-21);
+  if(comPeso.length>=4){
+    const d0=comPeso[0].data;
+    const pts=comPeso.map(r=>({x:(r.data-d0)/864e5,y:r.peso}));
+    const reg=regressaoLinear(pts);
+    if(reg&&reg.slope<-0.005){
+      const ultimoX=pts[pts.length-1].x;
+      const pesoProjetado=reg.slope*ultimoX+reg.intercept;
+      const diasParaMeta=Math.round((pesoProjetado-80)/(-reg.slope));
+      const dataMeta=new Date(comPeso[comPeso.length-1].data);dataMeta.setDate(dataMeta.getDate()+diasParaMeta);
+      const confPct=Math.round(clamp(reg.r2*100));
+      cards.push(`<div class="prev-card"><div class="prev-lbl">Ritmo atual → Meta 80kg</div><div class="prev-val">${dataMeta.toLocaleDateString('pt-BR')}</div><div class="prev-sub">${diasParaMeta>0?diasParaMeta+' dias mantendo o ritmo dos últimos ~'+comPeso.length+' registros ('+(reg.slope*7).toFixed(2)+'kg/semana)':'Meta já pode ter sido atingida'}</div><span class="prev-conf">Força da tendência (R²): ${confPct}%</span></div>`);
+    }else{
+      cards.push(`<div class="prev-card"><div class="prev-lbl">Ritmo atual → Meta 80kg</div><div class="prev-val" style="font-size:14px;color:var(--texto2)">Sem tendência de queda</div><div class="prev-sub">Os últimos registros de peso não mostram queda consistente. Uma projeção de data seria inventada — foque em fechar a aderência antes de prever data.</div></div>`);
+    }
+  }else{
+    cards.push(`<div class="prev-card"><div class="prev-lbl">Ritmo atual → Meta 80kg</div><div class="prev-val" style="font-size:14px;color:var(--texto2)">Dados insuficientes</div><div class="prev-sub">Precisa de pelo menos 4 registros de peso para calcular uma tendência real.</div></div>`);
+  }
+  document.getElementById('prev-lista').innerHTML=cards.join('');
+}
+function renderTimeline(regs,semanasDetalhe,medidasReg,hj){
+  const rodizio=['Abdômen D','Abdômen E','Coxa D','Coxa E','Braço D','Braço E'];
+  const items=[{marco:true,data:PROTOCOLO_INICIO,titulo:'Início do protocolo',detalhe:'Tirzepatida 2,5mg · Primeira aplicação · Todo domingo às 22h'}];
+  semanasDetalhe.forEach(s=>{
+    const medidaDaSemana=medidasReg.find(m=>m.data>=s.ini&&m.data<=s.fim);
+    const partes=[];
+    if(s.pesoFim!=null)partes.push('Peso: '+s.pesoFim.toFixed(1)+'kg'+(s.deltaPeso!=null?' ('+(s.deltaPeso>0?'+':'')+s.deltaPeso+'kg na semana)':''));
+    partes.push('Dose: local '+rodizio[(s.w-1)%rodizio.length]);
+    if(medidaDaSemana)partes.push('Medidas registradas nesta semana');
+    partes.push('Treinos: '+s.tr+'/3 · Proteína média: '+(s.mp?Math.round(s.mp)+'g':'—'));
+    items.push({marco:false,data:s.ini,titulo:'Semana '+s.w,detalhe:partes.join(' · ')});
+  });
+  items.push({marco:true,data:ULTIMA_APLICACAO_REAL,titulo:'Última dose de 2,5mg',detalhe:'Domingo 05/07/2026 — a aplicação de 12/07 foi pulada; dose seguinte já entra no novo esquema'});
+  items.push({marco:true,data:CADENCIA_NOVA,titulo:'Mudança de protocolo',detalhe:'Dose ajustada para 5mg · Aplicação passa a ser toda terça às 10h'});
+  items.push({marco:false,data:hj,titulo:'Hoje',detalhe:hj.toLocaleDateString('pt-BR')});
+  items.sort((a,b)=>a.data-b.data);
+  document.getElementById('timeline-wrap').innerHTML=items.map(i=>`<div class="tl-item"><div class="tl-dot ${i.marco?'marco':''}"></div><div class="tl-date">${i.data.toLocaleDateString('pt-BR')}</div><div class="tl-body"><div class="tl-title">${i.titulo}</div><div class="tl-detail">${i.detalhe}</div></div></div>`).join('');
+}
+function renderTirzepatida(regs,ult7,hj){
+  const sem=Math.floor((hj-PROTOCOLO_INICIO)/(7*864e5))+1;
+  document.getElementById('tz-semana').textContent=sem;
+  const rodizio=['Abdômen D','Abdômen E','Coxa D','Coxa E','Braço D','Braço E'];
+  document.getElementById('tz-local').textContent=rodizio[(sem-1)%rodizio.length];
+  const{prox,ult}=calcAplicacao(hj);
+  const diasProx=Math.ceil((prox-hj)/864e5);
+  document.getElementById('tz-prox').textContent=prox.toLocaleDateString('pt-BR')+(diasProx===0?' (hoje!)':'');
+  const diasDesde=Math.floor((hj-ult)/864e5);
+  document.getElementById('tz-desde').textContent=diasDesde;
+  const comNausea=ult7.filter(d=>d.reg?.nausea);
+  if(!comNausea.length){document.getElementById('tz-nausea').textContent='Sem registro';}
+  else{const dias=comNausea.filter(d=>{const n=d.reg.nausea.toLowerCase();return n&&!n.includes('nenhum')&&!n.includes('sem ');}).length;document.getElementById('tz-nausea').textContent=dias+'/7 dias';}
+  const comPeso=regs.filter(r=>r.peso);
+  if(comPeso.length>=2){const perdido=comPeso[0].peso-comPeso[comPeso.length-1].peso;document.getElementById('tz-perdido').textContent=(perdido>=0?'-':'+')+Math.abs(perdido).toFixed(1)+'kg';}
+  else document.getElementById('tz-perdido').textContent='—';
+}
+function renderMedidas(medidasReg){
+  if(!medidasReg.length){document.getElementById('medidas-sub').textContent='Sem medidas registradas';return;}
+  const primeira=medidasReg[0];const ultima=medidasReg[medidasReg.length-1];
+  document.getElementById('medidas-sub').textContent=(medidasReg.length===1?'Primeira medição: ':'Última: ')+ultima.data.toLocaleDateString('pt-BR')+(medidasReg.length>1?' · '+medidasReg.length+' registros':'');
+  ['cintura','quadril','braco','coxa','abdomen','peito'].forEach(k=>{
+    const va=ultima[k];const vi=primeira[k];
+    const eVal=document.getElementById('med-'+k);const eDiff=document.getElementById('med-'+k+'-diff');
+    if(va==null){eVal.textContent='—';eDiff.textContent='—';eDiff.className='medida-diff flat';return;}
+    eVal.textContent=va.toFixed(1)+'cm';
+    if(vi==null||medidasReg.length===1){eDiff.textContent='Base';eDiff.className='medida-diff flat';}
+    else{const d=va-vi;if(Math.abs(d)<.05){eDiff.textContent='Estável';eDiff.className='medida-diff flat';}else if(d<0){eDiff.textContent='▼ '+Math.abs(d).toFixed(1)+'cm';eDiff.className='medida-diff down';}else{eDiff.textContent='▲ '+d.toFixed(1)+'cm';eDiff.className='medida-diff up';}}
+  });
+}
+function renderSemanal(semanasDetalhe){
+  if(!semanasDetalhe.length){document.getElementById('sem-body').innerHTML='<tr><td colspan="4" style="color:var(--texto2);text-align:center;padding:10px">Aguardando dados</td></tr>';return;}
+  document.getElementById('sem-body').innerHTML=semanasDetalhe.map((sem,idx)=>{
+    const atual=idx===semanasDetalhe.length-1;const cls=atual?' atual':'';
+    const pc=!sem.mp?'':'pill '+(sem.mp>=120?'st-ok':sem.mp>=70?'st-warn':'st-bad');
+    const ac=!sem.ma?'':'pill '+(sem.ma>=2500?'st-ok':sem.ma>=2000?'st-warn':'st-bad');
+    const tc='pill '+(sem.tr>=3?'st-ok':sem.tr>=1?'st-warn':'st-bad');
+    return`<tr><td class="${cls}">S${sem.w}</td><td><span class="${pc}">${sem.mp?Math.round(sem.mp)+'g':'—'}</span></td><td><span class="${ac}">${sem.ma?Math.round(sem.ma)+'ml':'—'}</span></td><td><span class="${tc}">${sem.tr}/3</span></td></tr>`;
+  }).join('');
+}
+function renderBarras(dias14){
+  const ds=['D','S','T','Q','Q','S','S'];
+  const maxP=Math.max(...dias14.map(d=>d.reg?.prot||0),130);
+  document.getElementById('bar-prot').innerHTML=dias14.map(d=>{const p=d.reg?.prot||0;const h=p>0?Math.max(3,(p/maxP)*80):3;const cor=p>=120?'#3d9970':p>=70?'#4d8fd1':p>0?'#e0457a':'#232b3a';return`<div class="bar-item"><div class="bar-v" style="color:${cor}">${p>0?Math.round(p)+'g':'—'}</div><div class="bar-b" style="height:${h}px;background:${cor}"></div><div class="bar-l">${ds[d.data.getDay()]}</div></div>`;}).join('');
+  const maxA=Math.max(...dias14.map(d=>d.reg?.agua||0),2500);
+  document.getElementById('bar-agua').innerHTML=dias14.map(d=>{const a=d.reg?.agua||0;const h=a>0?Math.max(3,(a/maxA)*80):3;const cor=a>=2500?'#3d9970':a>=2000?'#4d8fd1':a>0?'#e0457a':'#232b3a';return`<div class="bar-item"><div class="bar-v" style="color:${cor}">${a>0?(a/1000).toFixed(1)+'L':'—'}</div><div class="bar-b" style="height:${h}px;background:${cor}"></div><div class="bar-l">${ds[d.data.getDay()]}</div></div>`;}).join('');
+}
+function renderHumor(regs){
+  const cats=['Ótimo','Bom','Neutro','Ruim','Péssimo'];const emos=['😄','🙂','😐','😕','😩'];const cors=['#3d9970','#4d8fd1','#8a95ab','#c9a23d','#e0457a'];const ct=[0,0,0,0,0];
+  regs.forEach(r=>{const h=r.humor||'';if(h.includes('timo'))ct[0]++;else if(h.includes('Bom'))ct[1]++;else if(h.includes('Neutro'))ct[2]++;else if(h.includes('Ruim'))ct[3]++;else if(h.includes('ssimo'))ct[4]++;});
+  const mx=Math.max(...ct,1);
+  document.getElementById('humor-wrap').innerHTML=cats.map((c,i)=>`<div class="hrow"><span class="hem">${emos[i]}</span><div class="hbar"><div class="hfill" style="width:${(ct[i]/mx)*100}%;background:${cors[i]}"></div></div><span class="hct">${ct[i]}</span></div>`).join('');
+}
+function renderVitorias(regs,hj,semanasDetalhe,prList,medidasReg){
+  const conquistas=[];
+  const diasProtocolo=Math.floor((hj-PROTOCOLO_INICIO)/864e5);
+  conquistas.push({ico:'🏆',txt:'Primeiro mês completo',sub:diasProtocolo+' dias de protocolo',on:diasProtocolo>=30});
+  conquistas.push({ico:'💯',txt:'100 dias de protocolo',sub:diasProtocolo+'/100 dias',on:diasProtocolo>=100});
+  const comPeso=regs.filter(r=>r.peso);
+  const perdidoTotal=comPeso.length>=2?(comPeso[0].peso-comPeso[comPeso.length-1].peso):0;
+  conquistas.push({ico:'⚖️',txt:'Primeiros 5kg perdidos',sub:comPeso.length>=2?perdidoTotal.toFixed(1)+'kg até agora':'Sem dados',on:perdidoTotal>=5});
+  const totalTreinos=regs.filter(r=>isTreinoRealizado(r.treino)).length;
+  conquistas.push({ico:'💪',txt:'10 treinos completos',sub:totalTreinos+'/10 treinos',on:totalTreinos>=10});
+  const semanaPerfeita=semanasDetalhe.some(s=>s.mp!=null&&s.mp>=120&&s.ma!=null&&s.ma>=2500&&s.tr>=3);
+  conquistas.push({ico:'⭐',txt:'Primeira semana perfeita',sub:'Proteína + água + treino na meta na mesma semana',on:semanaPerfeita});
+  const streakProt7=(()=>{const ult7=Array.from({length:7},(_,i)=>{const d=new Date(hj);d.setDate(hj.getDate()-(6-i));return regs.find(r=>mesmoDia(r.data,d))||null;});return ult7.filter(r=>r&&r.prot!=null&&r.prot>=120).length;})();
+  conquistas.push({ico:'🥩',txt:'120g de proteína · 7 dias seguidos',sub:streakProt7+'/7 dias esta semana',on:streakProt7===7});
+  let streak=0,maxStreak=0;
+  semanasDetalhe.forEach(s=>{if(s.tr>=3){streak++;maxStreak=Math.max(maxStreak,streak);}else streak=0;});
+  conquistas.push({ico:'🔥',txt:maxStreak+' semana(s) seguidas com 3/3 treinos',sub:maxStreak>=2?'Sequência máxima':'Ainda sem sequência de 2+',on:maxStreak>=2});
+  const algumPR=prList.some(p=>p.ehPR);
+  conquistas.push({ico:'🏋️',txt:'Novo PR em algum exercício',sub:algumPR?prList.filter(p=>p.ehPR).map(p=>p.nome).join(', '):'Nenhum PR esta semana',on:algumPR});
+  const minPeso=comPeso.length?Math.min(...comPeso.map(r=>r.peso)):null;
+  const pesoAtual=comPeso.length?comPeso[comPeso.length-1].peso:null;
+  conquistas.push({ico:'📉',txt:'Menor peso do protocolo',sub:minPeso?minPeso.toFixed(1)+'kg':'Sem dados',on:!!(minPeso&&pesoAtual&&pesoAtual<=minPeso)});
+  if(medidasReg.length>=2){const p=medidasReg[0],u=medidasReg[medidasReg.length-1];const cintOk=p.cintura!=null&&u.cintura!=null&&(p.cintura-u.cintura)>=1;conquistas.push({ico:'📏',txt:'Cintura reduziu 1cm+',sub:cintOk?'-'+(p.cintura-u.cintura).toFixed(1)+'cm desde o início':'Ainda não',on:cintOk});}
+  document.getElementById('vit-grid').innerHTML=conquistas.map(c=>`<div class="vit-card ${c.on?'on':'off'}"><div class="vit-ico">${c.ico}</div><div><div class="vit-txt">${c.txt}</div><div class="vit-sub">${c.sub}</div></div></div>`).join('');
+}
+function renderInsights(semanasDetalhe,cardioReg,treinoAEvo,treinoBEvo,treinoCEvo){
+  const cards=[];
+  const semComDados=semanasDetalhe.filter(s=>s.deltaPeso!=null&&s.mp!=null);
+  const acima=semComDados.filter(s=>s.mp>=120);const abaixo=semComDados.filter(s=>s.mp<120);
+  if(acima.length>=2&&abaixo.length>=2){
+    const dAcima=media(acima.map(s=>s.deltaPeso));const dAbaixo=media(abaixo.map(s=>s.deltaPeso));
+    cards.push(`<div class="insight-card"><div class="insight-ico">🥩</div><div class="insight-body"><div class="insight-title">Proteína × perda de peso</div><div class="insight-txt">Semanas com proteína <b>≥120g</b>: <b>${Math.abs(dAcima).toFixed(2)}kg/semana</b> perdidos em média. Abaixo de 120g: <b>${Math.abs(dAbaixo).toFixed(2)}kg/semana</b>.</div><div class="insight-meta">Correlação, não causalidade · base: ${acima.length} sem. ≥120g vs ${abaixo.length} sem. &lt;120g</div></div></div>`);
+  }else{
+    cards.push(`<div class="insight-card indisponivel"><div class="insight-ico">🥩</div><div class="insight-body"><div class="insight-title">Proteína × perda de peso</div><div class="insight-txt">Dados insuficientes — preciso de 2 semanas ≥120g e 2 semanas &lt;120g pra comparar com confiança mínima.</div></div></div>`);
+  }
+  const semCardio=semanasDetalhe.filter(s=>s.deltaPeso!=null).map(s=>({...s,cardioSessoes:cardioReg.filter(c=>c.data>=s.ini&&c.data<=s.fim).length}));
+  const com3=semCardio.filter(s=>s.cardioSessoes>=3);const sem3=semCardio.filter(s=>s.cardioSessoes<3);
+  if(com3.length>=2&&sem3.length>=2){
+    const dCom=media(com3.map(s=>s.deltaPeso));const dSem=media(sem3.map(s=>s.deltaPeso));
+    cards.push(`<div class="insight-card"><div class="insight-ico">🏃</div><div class="insight-body"><div class="insight-title">Cardio × perda de peso</div><div class="insight-txt">Semanas com <b>3+ sessões de cardio</b>: <b>${Math.abs(dCom).toFixed(2)}kg/semana</b>. Com menos de 3: <b>${Math.abs(dSem).toFixed(2)}kg/semana</b>.</div><div class="insight-meta">Correlação sobre amostra pequena · base: ${com3.length} sem. com 3x+ vs ${sem3.length} sem. com menos</div></div></div>`);
+  }else{
+    cards.push(`<div class="insight-card indisponivel"><div class="insight-ico">🏃</div><div class="insight-body"><div class="insight-title">Cardio × perda de peso</div><div class="insight-txt">Dados insuficientes — preciso de 2 semanas com 3+ sessões e 2 semanas com menos pra comparar.</div></div></div>`);
+  }
+  const aguaComDados=semanasDetalhe.filter(s=>s.deltaPeso!=null&&s.ma!=null);
+  const aguaAcima=aguaComDados.filter(s=>s.ma>=2800);const aguaAbaixo=aguaComDados.filter(s=>s.ma<2800);
+  if(aguaAcima.length>=2&&aguaAbaixo.length>=2){
+    const dAc=media(aguaAcima.map(s=>s.deltaPeso));const dAb=media(aguaAbaixo.map(s=>s.deltaPeso));
+    cards.push(`<div class="insight-card"><div class="insight-ico">💧</div><div class="insight-body"><div class="insight-title">Água × perda de peso</div><div class="insight-txt">Semanas com água média <b>≥2,8L</b>: <b>${Math.abs(dAc).toFixed(2)}kg/semana</b>. Abaixo disso: <b>${Math.abs(dAb).toFixed(2)}kg/semana</b>.</div><div class="insight-meta">Correlação, não causalidade · base: ${aguaAcima.length} sem. ≥2,8L vs ${aguaAbaixo.length} sem. &lt;2,8L</div></div></div>`);
+  }else{
+    cards.push(`<div class="insight-card indisponivel"><div class="insight-ico">💧</div><div class="insight-body"><div class="insight-title">Água × perda de peso</div><div class="insight-txt">Dados insuficientes — preciso de 2 semanas ≥2,8L e 2 semanas abaixo disso pra comparar.</div></div></div>`);
+  }
+  function evoGrupoPct(mapa){
+    const deltas=[];
+    Object.values(mapa).forEach(pontos=>{if(pontos.length<2)return;const sorted=pontos.slice().sort((a,b)=>a.semana-b.semana);const primeiro=sorted[0].cargaMedia;const ultimo=sorted[sorted.length-1].cargaMedia;if(primeiro>0)deltas.push((ultimo-primeiro)/primeiro*100);});
+    return deltas.length?{media:media(deltas),n:deltas.length}:null;
+  }
+  const grupos=[{nome:'A',r:evoGrupoPct(treinoAEvo)},{nome:'B',r:evoGrupoPct(treinoBEvo)},{nome:'C',r:evoGrupoPct(treinoCEvo)}];
+  const comDado=grupos.filter(g=>g.r&&g.r.n>=2);
+  if(comDado.length>=2){
+    comDado.sort((a,b)=>b.r.media-a.r.media);
+    const melhor=comDado[0];
+    cards.push(`<div class="insight-card"><div class="insight-ico">🏋️</div><div class="insight-body"><div class="insight-title">Treino com maior evolução de carga</div><div class="insight-txt">Treino <b>${melhor.nome}</b> tem a maior evolução média de carga: <b>${melhor.r.media>0?'+':''}${melhor.r.media.toFixed(1)}%</b> (${melhor.r.n} exercícios com 2+ semanas).</div><div class="insight-meta">Comparado entre: ${comDado.map(g=>'Treino '+g.nome+' ('+g.r.media.toFixed(1)+'%)').join(' · ')}</div></div></div>`);
+  }else{
+    cards.push(`<div class="insight-card indisponivel"><div class="insight-ico">🏋️</div><div class="insight-body"><div class="insight-title">Treino com maior evolução de carga</div><div class="insight-txt">Dados insuficientes — preciso de pelo menos 2 exercícios com 2+ semanas de histórico em pelo menos 2 treinos diferentes pra comparar.</div></div></div>`);
+  }
+  cards.push(`<div class="insight-card indisponivel"><div class="insight-ico">😴</div><div class="insight-body"><div class="insight-title">Descanso × evolução do Hip Thrust</div><div class="insight-txt">Não disponível: a planilha registra carga média por semana, não a data de cada sessão — não dá pra calcular dias de descanso entre treinos com o dado atual.</div><div class="insight-meta">Precisaria de uma coluna de data por sessão de treino pra isso funcionar de verdade.</div></div></div>`);
+  document.getElementById('insights-lista').innerHTML=cards.join('');
+}
+function computePrioridades(regHoje,ult7,ult14,regs,hj,medidasReg){
+  const{mediaProt,mediaAgua,treinos}=calcScore(regHoje,regs,ult7);
+  const itens=[];
+  if(!mediaProt)itens.push({txt:'Registrar proteína',sub:'Sem dados nos últimos 7 dias',estrelas:4});
+  else if(mediaProt<70)itens.push({txt:'120g de proteína',sub:'Média de '+Math.round(mediaProt)+'g/dia — risco muscular',estrelas:5});
+  else if(mediaProt<120)itens.push({txt:'120g de proteína',sub:'Média de '+Math.round(mediaProt)+'g/dia — faltam '+Math.round(120-mediaProt)+'g',estrelas:4});
+  if(treinos===0)itens.push({txt:'Treinar hoje',sub:'Nenhum treino esta semana',estrelas:5});
+  else if(treinos<3)itens.push({txt:'Fechar os treinos da semana',sub:treinos+'/3 treinos — faltam '+(3-treinos),estrelas:3});
+  if(!mediaAgua)itens.push({txt:'Registrar água',sub:'Sem dados nos últimos 7 dias',estrelas:3});
+  else if(mediaAgua<2000)itens.push({txt:'Hidratação',sub:'Média de '+Math.round(mediaAgua)+'ml/dia — abaixo do mínimo',estrelas:4});
+  else if(mediaAgua<2500)itens.push({txt:'Hidratação',sub:'Faltam '+Math.round(2500-mediaAgua)+'ml pra meta',estrelas:2});
+  const streakProt=calcStreak(ult14,'prot',v=>v<120);
+  if(streakProt>=3)itens.push({txt:'Revisar plano alimentar',sub:'Proteína abaixo da meta há '+streakProt+' dias seguidos',estrelas:4});
+  const comPeso=regs.filter(r=>r.peso).slice(-10);
+  if(comPeso.length>=4){
+    const ultimo=comPeso[comPeso.length-1].peso;
+    let estavelDesde=comPeso[comPeso.length-1].data;
+    for(let i=comPeso.length-2;i>=0;i--){if(Math.abs(comPeso[i].peso-ultimo)<.3)estavelDesde=comPeso[i].data;else break;}
+    const diasEstavel=Math.round((comPeso[comPeso.length-1].data-estavelDesde)/864e5);
+    if(diasEstavel>=10)itens.push({txt:'Revisar adesão',sub:'Peso estável há '+diasEstavel+' dias',estrelas:2});
+  }
+  if(regHoje?.peso==null)itens.push({txt:'Registrar peso de hoje',sub:'Ainda não registrado',estrelas:2});
+  itens.sort((a,b)=>b.estrelas-a.estrelas);
+  return itens;
+}
+function renderPrioridades(itens){
+  const wrap=document.getElementById('prioridade-wrap');
+  if(!itens.length){wrap.innerHTML='<div class="dia-perfeito"><div class="dia-perfeito-ico">✅</div><div class="dia-perfeito-txt">Tudo dentro da meta</div><div class="dia-perfeito-sub">Nenhuma ação necessária agora. Continue assim.</div></div>';return;}
+  const top=itens.slice(0,5);
+  wrap.innerHTML='<div class="sec-label">🎯 Prioridade de Hoje</div><div class="prio-list">'+top.map((it,idx)=>{const p=idx===0?'':idx===1?'p2':'p3';return`<div class="prio-item ${p}"><div class="prio-num">${idx+1}</div><div class="prio-info"><div class="prio-txt">${it.txt}</div><div class="prio-sub">${it.sub}</div></div><div class="prio-stars">${'★'.repeat(it.estrelas)}<span style="color:var(--borda)">${'★'.repeat(5-it.estrelas)}</span></div></div>`;}).join('')+'</div>';
+}
+function renderBomDia(regs,hj,prioridades){
+  const h=new Date().getHours();
+  const saud=h<12?'☀️ Bom dia':h<18?'🌤️ Boa tarde':'🌙 Boa noite';
+  document.getElementById('brief-saudacao').textContent=saud+', Hellen';
+  const ontem=new Date(hj);ontem.setDate(hj.getDate()-1);
+  const regOntem=regs.find(r=>mesmoDia(r.data,ontem));
+  if(!regOntem){document.getElementById('brief-txt').textContent='Sem registro de ontem ainda — preencha o Diário do Dia pra eu montar seu resumo.';document.getElementById('brief-foco').innerHTML='';return;}
+  const protPct=regOntem.prot!=null?clamp(regOntem.prot/120*100):0;
+  const aguaPct=regOntem.agua!=null?clamp(regOntem.agua/2500*100):0;
+  const treinoPct=isTreinoRealizado(regOntem.treino)?100:0;
+  const aderenciaOntem=Math.round(protPct*.45+aguaPct*.3+treinoPct*.25);
+  const comps=[{k:'proteína',v:protPct},{k:'água',v:aguaPct},{k:'treino',v:treinoPct}];
+  const compsOrd=comps.slice().sort((a,b)=>b.v-a.v);
+  const forte=compsOrd[0].v>0?compsOrd[0].k:null;
+  const fraco=compsOrd[compsOrd.length-1].k;
+  const comPeso=regs.filter(r=>r.peso).slice(-21);
+  let previsaoTxt='';
+  if(comPeso.length>=4){
+    const d0=comPeso[0].data;
+    const pts=comPeso.map(r=>({x:(r.data-d0)/864e5,y:r.peso}));
+    const reg=regressaoLinear(pts);
+    if(reg&&reg.slope<-0.005){
+      const ultimoX=pts[pts.length-1].x;
+      const pesoProjetado=reg.slope*ultimoX+reg.intercept;
+      const diasParaMeta=Math.round((pesoProjetado-80)/(-reg.slope));
+      const dataMeta=new Date(comPeso[comPeso.length-1].data);dataMeta.setDate(dataMeta.getDate()+diasParaMeta);
+      previsaoTxt=' Se repetir esse ritmo, sua projeção pra bater 80kg é <b>'+dataMeta.toLocaleDateString('pt-BR')+'</b>.';
+    }
+  }
+  document.getElementById('brief-txt').innerHTML='Ontem você cumpriu <b>'+aderenciaOntem+'%</b> do protocolo (proteína, água e treino).'+(forte?' Seu ponto forte foi <b>'+forte+'</b>.':'')+' Seu ponto de atenção foi <b>'+fraco+'</b>.'+previsaoTxt;
+  const foco=prioridades.slice(0,3);
+  document.getElementById('brief-foco').innerHTML=foco.length?foco.map(f=>'<span class="brief-foco-item">✓ '+f.txt+'</span>').join(''):'<span class="brief-foco-item">✓ Manter o ritmo</span>';
+}
+function renderProjecaoCarga(treinoAEvo,treinoBEvo,treinoCEvo){
+  const mapaTudo={};
+  [treinoAEvo,treinoBEvo,treinoCEvo].forEach(m=>Object.entries(m).forEach(([nome,pontos])=>{if(!mapaTudo[nome])mapaTudo[nome]=[];mapaTudo[nome]=mapaTudo[nome].concat(pontos);}));
+  const linhas=[];
+  Object.entries(mapaTudo).forEach(([nome,pontos])=>{
+    if(pontos.length<3)return;
+    const sorted=pontos.slice().sort((a,b)=>a.semana-b.semana);
+    const pts=sorted.map(p=>({x:p.semana,y:p.cargaMedia}));
+    const reg=regressaoLinear(pts);
+    if(!reg)return;
+    const proxSemana=sorted[sorted.length-1].semana+1;
+    const projecao=reg.slope*proxSemana+reg.intercept;
+    linhas.push({nome,ultimo:sorted[sorted.length-1].cargaMedia,projecao,r2:reg.r2,n:sorted.length});
+  });
+  const el=document.getElementById('proj-grid');
+  if(!linhas.length){el.innerHTML='<div style="color:var(--texto2);font-size:11px;text-align:center;padding:12px">Preencha 3+ semanas em algum exercício pra ver a projeção</div>';return;}
+  el.innerHTML=linhas.map(l=>`<div class="proj-item"><div><div class="proj-nome">${l.nome}</div><div class="proj-sub">Atual: ${l.ultimo.toFixed(1)}kg · ${l.n} semanas · R²: ${Math.round(clamp(l.r2*100))}%</div></div><div class="proj-val">${l.projecao.toFixed(1)}kg</div></div>`).join('');
+}
+function renderPadraoTirze(regs,hj){
+  const buckets=Array.from({length:7},()=>({total:0,comSintoma:0}));
+  regs.forEach(r=>{
+    if(r.data<PROTOCOLO_INICIO||!r.nausea)return;
+    const anchorAtivo=r.data<CADENCIA_NOVA?PROTOCOLO_INICIO:CADENCIA_NOVA;
+    const diasDesdeInicio=Math.floor((r.data-anchorAtivo)/864e5);
+    const diaCiclo=((diasDesdeInicio%7)+7)%7;
+    buckets[diaCiclo].total++;
+    const n=r.nausea.toLowerCase();
+    if(n&&!n.includes('nenhum')&&!n.includes('sem '))buckets[diaCiclo].comSintoma++;
+  });
+  const totalRegistros=buckets.reduce((s,b)=>s+b.total,0);
+  const sub=document.getElementById('padrao-sub');
+  if(totalRegistros<14){sub.textContent='Dados insuficientes ainda (mín. 2 ciclos completos com náusea registrada) — continue preenchendo o Diário do Dia';document.getElementById('padrao-grid').innerHTML='';return;}
+  sub.textContent='% de dias com náusea registrada, por dia desde a aplicação (dom. até 05/07, ter. a partir de 14/07) · '+totalRegistros+' registros no total';
+  const pcts=buckets.map(b=>b.total?Math.round((b.comSintoma/b.total)*100):null);
+  const maxPct=Math.max(...pcts.filter(p=>p!=null),0);
+  const labels=['Dia 0 (dose)','Dia 1','Dia 2','Dia 3','Dia 4','Dia 5','Dia 6'];
+  document.getElementById('padrao-grid').innerHTML=buckets.map((b,i)=>{const pior=pcts[i]!=null&&pcts[i]===maxPct&&maxPct>0;return`<div class="padrao-dia ${pior?'pior':''}"><div class="padrao-dia-lbl">${labels[i]}</div><div class="padrao-dia-val">${pcts[i]!=null?pcts[i]+'%':'—'}</div></div>`;}).join('');
+}
+const EX_REFS={gli:{l:'Glicemia Jejum',u:'mg/dL',mn:70,mx:99,cat:'Metabólico'},ins:{l:'Insulina',u:'µUI/mL',mn:2.6,mx:24.9,cat:'Metabólico'},tsh:{l:'TSH',u:'µUI/mL',mn:.4,mx:4.5,cat:'Tireoide'},t4:{l:'T4 Livre',u:'ng/dL',mn:.93,mx:1.70,cat:'Tireoide'},t3:{l:'T3 Livre',u:'pg/mL',mn:2.0,mx:4.4,cat:'Tireoide'},col:{l:'Colesterol Total',u:'mg/dL',mn:0,mx:190,cat:'Lipídico'},hdl:{l:'HDL',u:'mg/dL',mn:40,mx:999,cat:'Lipídico'},ldl:{l:'LDL',u:'mg/dL',mn:0,mx:130,cat:'Lipídico'},vldl:{l:'VLDL',u:'mg/dL',mn:0,mx:30,cat:'Lipídico'},tri:{l:'Triglicerídeos',u:'mg/dL',mn:0,mx:150,cat:'Lipídico'},vitd:{l:'Vitamina D',u:'ng/mL',mn:20,mx:60,cat:'Vitaminas'},b12:{l:'Vitamina B12',u:'pg/mL',mn:197,mx:771,cat:'Vitaminas'},folico:{l:'Ácido Fólico',u:'ng/mL',mn:3.9,mx:999,cat:'Vitaminas'},ferritina:{l:'Ferritina',u:'ng/mL',mn:15,mx:150,cat:'Ferro'},ferro:{l:'Ferro Sérico',u:'µg/dL',mn:33,mx:193,cat:'Ferro'},urico:{l:'Ácido Úrico',u:'mg/dL',mn:2.4,mx:5.7,cat:'Metabólico'},creat:{l:'Creatinina',u:'mg/dL',mn:.5,mx:.9,cat:'Renal'},tfg:{l:'TFG Estimada',u:'mL/min',mn:90,mx:999,cat:'Renal'},tgo:{l:'TGO/AST',u:'U/L',mn:0,mx:35,cat:'Hepático'},tgp:{l:'TGP/ALT',u:'U/L',mn:0,mx:35,cat:'Hepático'},ggt:{l:'Gama GT',u:'U/L',mn:0,mx:40,cat:'Hepático'},fa:{l:'Fosfatase Alcalina',u:'U/L',mn:35,mx:104,cat:'Hepático'},pcr:{l:'PCR Ultra-sensível',u:'mg/L',mn:0,mx:3.0,cat:'Inflamatório'},homo:{l:'Homocisteína',u:'µmol/L',mn:0,mx:15,cat:'Inflamatório'},cortisol:{l:'Cortisol Basal',u:'µg/dL',mn:4.82,mx:19.5,cat:'Hormonal'},pth:{l:'PTH Intacto',u:'pg/mL',mn:17.3,mx:74.1,cat:'Hormonal'},testo:{l:'Testosterona Total',u:'ng/dL',mn:8.4,mx:48.1,cat:'Hormonal'},testolivre:{l:'Testosterona Livre',u:'ng/dL',mn:.086,mx:.95,cat:'Hormonal'},shbg:{l:'SHBG',u:'nmol/L',mn:32.4,mx:128,cat:'Hormonal'},estradiol:{l:'Estradiol',u:'pg/mL',mn:30.9,mx:232,cat:'Hormonal'},prog:{l:'Progesterona',u:'ng/mL',mn:.06,mx:14.5,cat:'Hormonal'},sdhea:{l:'SDHEA',u:'µg/dL',mn:22,mx:471,cat:'Hormonal'},fibri:{l:'Fibrinogênio',u:'mg/dL',mn:200,mx:400,cat:'Coagulação'},vhs:{l:'VHS 1ª hora',u:'mm',mn:0,mx:30,cat:'Inflamatório'}};
+const EX_ANTERIOR={gli:96,ins:25.3,tsh:3.32,t4:1.17,col:213,hdl:51,ldl:128,vldl:34,tri:197,vitd:27,b12:379,folico:4.7,ferritina:229,ferro:107,urico:5.7,creat:.89,tfg:83,tgo:21,tgp:33,ggt:59,fa:58,pcr:3.3,homo:10,cortisol:26.30,pth:33.9,testo:29.3,testolivre:.56,estradiol:89.7,fibri:null,vhs:20};
+function renderExames(){
+  const cats=['Metabólico','Tireoide','Lipídico','Vitaminas','Ferro','Renal','Hepático','Inflamatório','Hormonal','Coagulação'];
+  let html='';
+  cats.forEach(cat=>{
+    const itens=Object.entries(EX_REFS).filter(([k,r])=>r.cat===cat);if(!itens.length)return;
+    html+=`<div style="font-size:9px;color:var(--dourado);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:10px 0 4px;opacity:.8">${cat}</div>`;
+    itens.forEach(([k,r])=>{const v=exames[k];let stc='st-vazio',stt='Aguardando',vt='—',tend='';if(v!=null&&v!==''){const n=+v;vt=n+' '+r.u;if(n>=r.mn&&n<=r.mx){stc='st-ok';stt='Normal';}else if(n<r.mn*.8||n>r.mx*1.3){stc='st-bad';stt='Atenção';}else{stc='st-warn';stt='Limítrofe';}const ant=EX_ANTERIOR[k];if(ant!=null){const diff=n-ant;if(Math.abs(diff)>.001){tend=diff>0?` <span style="color:var(--alerta);font-size:9px;">▲${Math.abs(diff).toFixed(1)}</span>`:`<span style="color:var(--verde);font-size:9px;"> ▼${Math.abs(diff).toFixed(1)}</span>`;}}}html+=`<div class="ex-row"><span class="ex-nome">${r.l}</span><span class="ex-val">${vt}${tend}</span><span class="ex-st ${stc}">${stt}</span></div>`;});
+  });
+  document.getElementById('ex-lista').innerHTML=html;
+}
+function toggleEx(){const f=document.getElementById('ex-form');f.style.display=f.style.display==='none'?'block':'none';Object.keys(EX_REFS).forEach(k=>{const el=document.getElementById('ex-'+k);if(el&&exames[k]!=null)el.value=exames[k];});}
+function salvarEx(){Object.keys(EX_REFS).forEach(k=>{const el=document.getElementById('ex-'+k);if(el&&el.value)exames[k]=el.value;});localStorage.setItem('ex_hellen',JSON.stringify(exames));renderExames();document.getElementById('ex-form').style.display='none';}
+carregar();
+setInterval(carregar,5*60*1000);
+</script>
+</body>
+</html>
