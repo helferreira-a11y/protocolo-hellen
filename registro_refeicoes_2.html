@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de Refeições — Protocolo Hellen</title>
+<style>
+  :root {
+    --bg: #0b0f17;
+    --panel: #121826;
+    --panel-2: #17202f;
+    --rose: #e0457a;
+    --blue: #4d8fd1;
+    --text: #e9edf4;
+    --text-dim: #8b95a7;
+    --border: #232c3d;
+    --ok: #4dd18f;
+    --err: #e05a4d;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 20px 16px 60px;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  h1 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 4px;
+    letter-spacing: -0.02em;
+  }
+  .sub {
+    color: var(--text-dim);
+    font-size: 13px;
+    margin: 0 0 20px;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+  label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .row { display: flex; gap: 10px; margin-bottom: 14px; }
+  .row > div { flex: 1; }
+  input, select, textarea {
+    width: 100%;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+  }
+  textarea {
+    min-height: 140px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--blue);
+  }
+  button {
+    border: none;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--rose), #c73868);
+    color: #fff;
+    width: 100%;
+  }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-secondary {
+    background: var(--blue);
+    color: #fff;
+    width: 100%;
+    margin-top: 10px;
+  }
+  .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 8px 6px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { color: var(--text-dim); font-size: 11px; text-transform: uppercase; font-weight: 600; }
+  td input {
+    padding: 4px 6px;
+    font-size: 13px;
+    background: transparent;
+    border: 1px solid transparent;
+  }
+  td input:hover, td input:focus { border-color: var(--border); background: var(--panel-2); }
+  .num { width: 56px; text-align: right; }
+  .totals td { font-weight: 700; border-top: 2px solid var(--border); border-bottom: none; }
+  .status {
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+    display: none;
+  }
+  .status.show { display: block; }
+  .status.ok { background: rgba(77,209,143,0.12); color: var(--ok); }
+  .status.err { background: rgba(224,90,77,0.12); color: var(--err); }
+  .status.loading { background: rgba(77,143,209,0.12); color: var(--blue); }
+  .remove-btn {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  .hint {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: -6px;
+    margin-bottom: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Registro de Refeições</h1>
+  <p class="sub">Escolha os alimentos, confira os números, envie pra planilha.</p>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label>Data</label>
+        <input type="date" id="data">
+      </div>
+      <div>
+        <label>Horário</label>
+        <input type="time" id="horario">
+      </div>
+      <div>
+        <label>Refeição</label>
+        <select id="refeicao">
+          <option>Café da manhã</option>
+          <option>Lanche manhã</option>
+          <option>Almoço</option>
+          <option>Lanche tarde</option>
+          <option>Pós-treino</option>
+          <option>Jantar</option>
+          <option>Ceia</option>
+        </select>
+      </div>
+    </div>
+
+    <label>Adicionar da base cadastrada</label>
+    <div class="row">
+      <div style="flex:3">
+        <select id="selectAlimento"></select>
+      </div>
+      <div style="flex:1">
+        <input type="number" id="qtdPorcoes" value="1" step="0.1" min="0">
+      </div>
+    </div>
+    <button class="btn-primary" id="btnAdicionarDb" type="button">Adicionar item</button>
+
+    <div class="hint" style="margin-top:16px">Alimento fora da lista (sushi, restaurante, etc.)? Me manda no chat que eu calculo os macros, e você digita os números abaixo.</div>
+
+    <label style="margin-top:10px">Alimento manual</label>
+    <div class="row">
+      <div style="flex:3"><input type="text" id="manAlimento" placeholder="Ex: Uramaki skin (2 unidades)"></div>
+    </div>
+    <div class="row">
+      <div><label>Prot (g)</label><input type="number" id="manProt" step="0.1" value="0"></div>
+      <div><label>Carb (g)</label><input type="number" id="manCarb" step="0.1" value="0"></div>
+      <div><label>Gord (g)</label><input type="number" id="manGord" step="0.1" value="0"></div>
+      <div><label>Cal</label><input type="number" id="manCal" step="1" value="0"></div>
+    </div>
+    <label style="margin-top:16px">Colar bloco do dia (formato pronto com Refeição/Alimentos/Calorias/Proteínas/Carboidratos/Gorduras)</label>
+    <textarea id="textoBloco" placeholder="☀️ Café da manhã
+32 g de tapioca + 20 g de atum + 1 ovo
+≈190 kcal
+≈15 g
+≈23 g
+≈5 g
+
+💪 Pós-treino
+..."></textarea>
+    <button class="btn-primary" id="btnProcessarBloco" type="button">Processar bloco</button>
+    <div class="status" id="statusBloco"></div>
+  </div>
+
+  <div class="card" id="cardResultado" style="display:none">
+    <table>
+      <thead>
+        <tr>
+          <th>Refeição</th>
+          <th>Alimento</th>
+          <th class="num">Prot</th>
+          <th class="num">Carb</th>
+          <th class="num">Gord</th>
+          <th class="num">Cal</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbodyItens"></tbody>
+      <tbody class="totals">
+        <tr>
+          <td></td>
+          <td>Total</td>
+          <td class="num" id="totProt">0</td>
+          <td class="num" id="totCarb">0</td>
+          <td class="num" id="totGord">0</td>
+          <td class="num" id="totCal">0</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button class="btn-secondary" id="btnEnviar">Enviar para planilha</button>
+    <div class="status" id="statusEnvio"></div>
+  </div>
+</div>
+
+<script>
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxAboD6pqWYey28GX_SVWxb9dW_BQfmaGU36PhkmA3oQ0HKv2EM4UnxuYxA6BulwkVOgQ/exec";
+
+// Base de alimentos conhecida (valores por 1 porção, conforme já cadastrado na planilha).
+// Usada como referência para a IA manter os mesmos números que Hellen já usa.
+const FOOD_DB = [
+  ["Ovo inteiro (1 unidade ~50g)", 6.3, 0.4, 5.0, 73],
+  ["Ovo inteiro (2 unidades ~100g)", 12.6, 0.8, 10.0, 146],
+  ["Clara de ovo (2 unidades ~66g)", 7.2, 0.6, 0.1, 34],
+  ["Frango grelhado - pequeno (~100g)", 31.0, 0.0, 3.6, 165],
+  ["Frango grelhado - médio (~150g)", 46.5, 0.0, 5.4, 248],
+  ["Panqueca de frango - por disco", 14.7, 4.1, 7.4, 141],
+  ["Peito de frango cozido (~100g)", 32.0, 0.0, 3.6, 165],
+  ["Sobrecoxa de frango grelhada (~100g)", 24.0, 0.0, 11.0, 198],
+  ["Coxa de frango grelhada (~100g)", 25.0, 0.0, 9.0, 179],
+  ["Peito de frango moído (lanche pão francês)", 35.0, 18.0, 8.0, 290],
+  ["Carne bovina patinho (~100g)", 26.0, 0.0, 5.0, 153],
+  ["Carne bovina acém (~100g)", 24.0, 0.0, 8.0, 172],
+  ["Carne bovina alcatra (~100g)", 28.0, 0.0, 5.5, 162],
+  ["Contrafilé grelhado (~100g)", 26.0, 0.0, 8.0, 177],
+  ["Carne moída suína (lanche pão francês)", 24.0, 18.0, 15.0, 300],
+  ["Proteína Bovina (porção)", 26.0, 0.0, 0.0, 104],
+  ["Atum em água escorrido (1 lata ~120g)", 28.0, 0.0, 0.8, 118],
+  ["Sardinha em óleo escorrida (1 lata ~90g)", 19.5, 0.0, 7.2, 149],
+  ["Salmão grelhado (~100g)", 25.0, 0.0, 13.0, 222],
+  ["Tilápia grelhada (~100g)", 26.0, 0.0, 2.7, 128],
+  ["Whey protein neutro (1 dose ~30g)", 24.0, 3.0, 1.5, 122],
+  ["Max Titanium 3W (1 scoop)", 32.0, 4.3, 2.7, 170],
+  ["Iogurte grego integral (1 pote ~170g)", 15.0, 7.0, 9.0, 171],
+  ["Iogurte grego 0% gordura (1 pote ~170g)", 17.0, 7.0, 0.3, 100],
+  ["Queijo cottage (2 col sopa ~50g)", 7.0, 2.0, 2.5, 58],
+  ["Queijo mussarela (1 fatia ~25g)", 5.3, 0.4, 5.3, 72],
+  ["Queijo prato (1 fatia ~25g)", 6.3, 0.4, 6.0, 81],
+  ["Leite desnatado (1 copo ~200ml)", 6.8, 10.0, 0.2, 70],
+  ["Leite integral (1 copo ~200ml)", 6.4, 9.6, 6.4, 124],
+  ["Arroz branco (1 col servir ~60g coz)", 1.6, 18.0, 0.1, 78],
+  ["Arroz integral (1 col servir ~60g coz)", 2.2, 19.0, 0.4, 88],
+  ["Feijão preto/cozido (1 concha ~80g)", 4.8, 14.0, 0.3, 78],
+  ["Lentilha cozida (1 concha ~80g)", 7.0, 15.0, 0.3, 91],
+  ["Batata doce cozida (1 unid média ~100g)", 1.6, 20.0, 0.1, 86],
+  ["Batata inglesa cozida (1 unid média ~100g)", 2.0, 17.0, 0.1, 77],
+  ["Mandioquinha cozida (~100g)", 1.5, 20.0, 0.2, 85],
+  ["Cenoura crua (1 unid média ~80g)", 0.2, 1.6, 0.0, 7.2],
+  ["Brócolis cozido (1 col servir ~100g)", 1.4, 1.8, 0.2, 14],
+  ["Macarrão cozido (1 porção ~100g)", 3.4, 25.0, 0.9, 131],
+  ["Pão francês (1 unid ~50g)", 3.2, 28.0, 1.2, 138],
+  ["Pão de forma integral (1 fatia ~25g)", 2.8, 11.0, 1.0, 62],
+  ["Aveia em flocos (3 col sopa ~30g)", 3.0, 20.0, 1.5, 106],
+  ["Granola sem açúcar (3 col sopa ~30g)", 2.8, 18.0, 3.0, 111],
+  ["Banana prata (1 unid média ~80g)", 0.9, 18.0, 0.2, 74],
+  ["Maçã (1 unid média ~120g)", 0.4, 16.0, 0.2, 63],
+  ["Mamão papaia (1 fatia ~150g)", 1.0, 10.0, 0.2, 44],
+  ["Abacate (1/4 unid ~50g)", 0.5, 1.5, 7.5, 80],
+  ["Castanha do pará (2 unid ~10g)", 2.0, 0.8, 7.0, 75],
+  ["Castanha de caju (10 unid ~30g)", 5.0, 9.0, 13.0, 166],
+  ["Creatina (5g - suplemento)", 0.0, 0.0, 0.0, 0],
+  ["Kibe assado (marmitinha 100g)", 15.0, 14.0, 6.0, 165],
+  ["Estrogonoff de frango (porção)", 26.0, 4.0, 9.0, 235],
+  ["Shake com aveia (porção)", 23.5, 39.0, 2.3, 255]
+];
+
+document.getElementById('data').valueAsDate = new Date();
+
+const btnEnviar = document.getElementById('btnEnviar');
+const statusEnvio = document.getElementById('statusEnvio');
+const cardResultado = document.getElementById('cardResultado');
+const tbodyItens = document.getElementById('tbodyItens');
+
+// Popula o dropdown com a base de alimentos
+const selectAlimento = document.getElementById('selectAlimento');
+FOOD_DB.forEach((f, idx) => {
+  const opt = document.createElement('option');
+  opt.value = idx;
+  opt.textContent = f[0];
+  selectAlimento.appendChild(opt);
+});
+
+function showStatus(el, msg, kind) {
+  el.textContent = msg;
+  el.className = 'status show ' + kind;
+}
+
+function fmt(n) {
+  return Math.round(n * 10) / 10;
+}
+
+let itensAtuais = [];
+
+function adicionarItem(item) {
+  itensAtuais.push(item);
+  renderItens(itensAtuais);
+}
+
+document.getElementById('btnAdicionarDb').addEventListener('click', () => {
+  const idx = parseInt(selectAlimento.value, 10);
+  const qtd = parseFloat(document.getElementById('qtdPorcoes').value) || 1;
+  const f = FOOD_DB[idx];
+  adicionarItem({
+    alimento: `${f[0]} × ${qtd}`,
+    proteina: fmt(f[1] * qtd),
+    carbo: fmt(f[2] * qtd),
+    gordura: fmt(f[3] * qtd),
+    cal: Math.round(f[4] * qtd)
+  });
+});
+
+function parseBloco(texto) {
+  const linhas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  const itens = [];
+  let i = 0;
+
+  const numFrom = (s) => {
+    if (!s) return null;
+    const m = s.replace(',', '.').match(/\d+(\.\d+)?/);
+    return m ? parseFloat(m[0]) : null;
+  };
+
+  while (i < linhas.length) {
+    const linha = linhas[i];
+
+    if (/totais do dia/i.test(linha)) break;
+    if (/^(refeição|alimentos|calorias|proteínas|carboidratos|gorduras)$/i.test(linha)) {
+      i++; continue;
+    }
+
+    if (i + 5 < linhas.length) {
+      const alimentos = linhas[i + 1];
+      const cal = numFrom(linhas[i + 2]);
+      const prot = numFrom(linhas[i + 3]);
+      const carb = numFrom(linhas[i + 4]);
+      const gord = numFrom(linhas[i + 5]);
+
+      if (cal !== null && prot !== null && carb !== null && gord !== null) {
+        const nomeRefeicao = linha.replace(/^[^\p{L}]+/u, '').trim();
+        itens.push({ refeicao: nomeRefeicao, alimento: alimentos, cal, proteina: prot, carbo: carb, gordura: gord });
+        i += 6;
+        continue;
+      }
+    }
+    i++;
+  }
+  return itens;
+}
+
+document.getElementById('btnProcessarBloco').addEventListener('click', () => {
+  const texto = document.getElementById('textoBloco').value;
+  const statusBloco = document.getElementById('statusBloco');
+  const itens = parseBloco(texto);
+
+  if (itens.length === 0) {
+    showStatus(statusBloco, 'Não reconheci nenhuma refeição nesse formato. Confira se o bloco tem: nome da refeição, linha de alimentos, e 4 linhas (kcal, proteína, carbo, gordura) nessa ordem.', 'err');
+    return;
+  }
+
+  itens.forEach(item => adicionarItem(item));
+  showStatus(statusBloco, `${itens.length} refeição(ões) adicionada(s) abaixo. Confira antes de enviar.`, 'ok');
+  document.getElementById('textoBloco').value = '';
+});
+
+document.getElementById('btnAdicionarManual').addEventListener('click', () => {
+  const nome = document.getElementById('manAlimento').value.trim();
+  if (!nome) return;
+  adicionarItem({
+    alimento: nome,
+    proteina: parseFloat(document.getElementById('manProt').value) || 0,
+    carbo: parseFloat(document.getElementById('manCarb').value) || 0,
+    gordura: parseFloat(document.getElementById('manGord').value) || 0,
+    cal: parseFloat(document.getElementById('manCal').value) || 0
+  });
+  document.getElementById('manAlimento').value = '';
+  document.getElementById('manProt').value = 0;
+  document.getElementById('manCarb').value = 0;
+  document.getElementById('manGord').value = 0;
+  document.getElementById('manCal').value = 0;
+});
+
+function renderItens(itens) {
+  tbodyItens.innerHTML = '';
+  itens.forEach((item, idx) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" data-field="refeicao" data-idx="${idx}" value="${item.refeicao || document.getElementById('refeicao').value}"></td>
+      <td><input type="text" data-field="alimento" data-idx="${idx}" value="${item.alimento || ''}"></td>
+      <td><input type="number" step="0.1" class="num" data-field="proteina" data-idx="${idx}" value="${item.proteina || 0}"></td>
+      <td><input type="number" step="0.1" class="num" data-field="carbo" data-idx="${idx}" value="${item.carbo || 0}"></td>
+      <td><input type="number" step="0.1" class="num" data-field="gordura" data-idx="${idx}" value="${item.gordura || 0}"></td>
+      <td><input type="number" step="1" class="num" data-field="cal" data-idx="${idx}" value="${item.cal || 0}"></td>
+      <td><button class="remove-btn" data-remove="${idx}">✕</button></td>
+    `;
+    tbodyItens.appendChild(tr);
+  });
+  cardResultado.style.display = 'block';
+  atualizarTotais();
+}
+
+function atualizarTotais() {
+  let p = 0, c = 0, g = 0, cal = 0;
+  tbodyItens.querySelectorAll('tr').forEach(tr => {
+    p += parseFloat(tr.querySelector('[data-field="proteina"]').value) || 0;
+    c += parseFloat(tr.querySelector('[data-field="carbo"]').value) || 0;
+    g += parseFloat(tr.querySelector('[data-field="gordura"]').value) || 0;
+    cal += parseFloat(tr.querySelector('[data-field="cal"]').value) || 0;
+  });
+  document.getElementById('totProt').textContent = fmt(p) + 'g';
+  document.getElementById('totCarb').textContent = fmt(c) + 'g';
+  document.getElementById('totGord').textContent = fmt(g) + 'g';
+  document.getElementById('totCal').textContent = fmt(cal);
+}
+
+tbodyItens.addEventListener('input', atualizarTotais);
+tbodyItens.addEventListener('click', (e) => {
+  const idx = e.target.getAttribute('data-remove');
+  if (idx !== null) {
+    e.target.closest('tr').remove();
+    atualizarTotais();
+  }
+});
+
+btnEnviar.addEventListener('click', async () => {
+  const data = document.getElementById('data').value;
+  const horario = document.getElementById('horario').value;
+  const refeicao = document.getElementById('refeicao').value;
+
+  if (!data) {
+    showStatus(statusEnvio, 'Preencha a data.', 'err');
+    return;
+  }
+
+  // Converte data de YYYY-MM-DD (input) para DD/MM/YYYY (formato da planilha)
+  const [ano, mes, dia] = data.split('-');
+  const dataFormatada = `${dia}/${mes}/${ano}`;
+
+  const linhas = document.getElementById('tbodyItens').querySelectorAll('tr');
+  const items = Array.from(linhas).map(tr => ({
+    data: dataFormatada,
+    horario: horario,
+    refeicao: tr.querySelector('[data-field="refeicao"]').value || refeicao,
+    alimento: tr.querySelector('[data-field="alimento"]').value,
+    qtdPorcoes: 1,
+    proteina: parseFloat(tr.querySelector('[data-field="proteina"]').value) || 0,
+    carbo: parseFloat(tr.querySelector('[data-field="carbo"]').value) || 0,
+    gordura: parseFloat(tr.querySelector('[data-field="gordura"]').value) || 0,
+    cal: parseFloat(tr.querySelector('[data-field="cal"]').value) || 0,
+    obs: ''
+  }));
+
+  if (items.length === 0) {
+    showStatus(statusEnvio, 'Nenhum item para enviar.', 'err');
+    return;
+  }
+
+  btnEnviar.disabled = true;
+  showStatus(statusEnvio, 'Enviando para a planilha...', 'loading');
+
+  try {
+    // Envia como texto puro (evita preflight CORS no Apps Script)
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ items })
+    });
+    const result = await response.json();
+
+    if (result.success) {
+      showStatus(statusEnvio, `${result.linhasAdicionadas} linha(s) gravada(s) na aba "${result.aba}".`, 'ok');
+    } else {
+      showStatus(statusEnvio, 'Planilha recusou: ' + result.error, 'err');
+    }
+  } catch (err) {
+    showStatus(statusEnvio, 'Erro de conexão: ' + err.message, 'err');
+  } finally {
+    btnEnviar.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
