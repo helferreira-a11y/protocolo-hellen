@@ -219,6 +219,7 @@
       <div class="badge"><div class="rotulo">Energia</div><div class="valor" id="badgeEnergia">—</div></div>
       <div class="badge"><div class="rotulo">Cansaço pós-treino</div><div class="valor" id="badgeCansaco">—</div></div>
       <div class="badge"><div class="rotulo">Passos</div><div class="valor" id="badgePassos">—</div></div>
+      <div class="badge"><div class="rotulo">Sono</div><div class="valor" id="badgeSono">—</div></div>
     </div>
 
     <div class="grid-3">
@@ -367,6 +368,7 @@
         document.getElementById('badgeEnergia').textContent = d.hoje.energia || '—';
         document.getElementById('badgeCansaco').textContent = d.hoje.cansacoPosTreino !== null ? d.hoje.cansacoPosTreino + '/5' : '—';
         document.getElementById('badgePassos').textContent = d.hoje.passos !== null ? d.hoje.passos : 'sem registro';
+        document.getElementById('badgeSono').textContent = d.hoje.sono !== null ? d.hoje.sono + '/10' : 'sem registro';
 
         anelPercent('anelAgua', 'aguaValor', d.hoje.agua, 2500, 'ml');
         anelPercent('anelProteina', 'proteinaValor', d.hoje.proteina, 120, 'g');
