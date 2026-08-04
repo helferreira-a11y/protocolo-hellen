@@ -368,7 +368,13 @@
         document.getElementById('badgeEnergia').textContent = d.hoje.energia || '—';
         document.getElementById('badgeCansaco').textContent = d.hoje.cansacoPosTreino !== null ? d.hoje.cansacoPosTreino + '/5' : '—';
         document.getElementById('badgePassos').textContent = d.hoje.passos !== null ? d.hoje.passos : 'sem registro';
-        document.getElementById('badgeSono').textContent = d.hoje.sono !== null ? d.hoje.sono + '/10' : 'sem registro';
+        if (d.hoje.sono !== null) {
+          var sonoTxt = d.hoje.sono + '/10';
+          if (d.hoje.sonoData && d.hoje.sonoData !== d.hoje.data) sonoTxt += ' (' + fmtData(d.hoje.sonoData) + ')';
+          document.getElementById('badgeSono').textContent = sonoTxt;
+        } else {
+          document.getElementById('badgeSono').textContent = 'sem registro';
+        }
 
         anelPercent('anelAgua', 'aguaValor', d.hoje.agua, 2500, 'ml');
         anelPercent('anelProteina', 'proteinaValor', d.hoje.proteina, 120, 'g');
