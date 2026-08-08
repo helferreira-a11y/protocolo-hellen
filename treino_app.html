@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Registro de Treino — Hellen</title>
+<style>
+  :root{
+    --bg:#080A0F;
+    --card:#171B24;
+    --border:#313849;
+    --gold:#CBAD8D;
+    --cyan:#2DC5FF;
+    --text:#F2F0EC;
+    --text-dim:#9AA1B0;
+    --radius:18px;
+    --danger:#E0665A;
+    --ok:#6FCF97;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    min-height:100vh;}
+  body{display:flex; flex-direction:column; align-items:center; padding:20px 16px 40px;}
+  .wrap{width:100%; max-width:480px;}
+
+  header{display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;}
+  header h1{font-size:15px; font-weight:600; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--gold); margin:0;}
+  .back-btn{background:none; border:1px solid var(--border); color:var(--text-dim);
+    border-radius:12px; padding:8px 14px; font-size:13px; cursor:pointer;}
+  .back-btn:active{border-color:var(--cyan); color:var(--cyan);}
+
+  .screen{display:none;}
+  .screen.active{display:block; animation:fade .18s ease-out;}
+  @keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+  /* Treino grid */
+  .treino-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .treino-btn{background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:20px 14px; text-align:left; cursor:pointer; color:var(--text);}
+  .treino-btn:active{border-color:var(--gold); background:#1D222D;}
+  .treino-btn .num{font-size:22px; font-weight:700; color:var(--gold);}
+  .treino-btn .label{display:block; margin-top:6px; font-size:12.5px; color:var(--text-dim); line-height:1.35;}
+
+  /* Exercise list */
+  .ex-list{display:flex; flex-direction:column; gap:10px;}
+  .ex-row{background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:16px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;}
+  .ex-row:active{border-color:var(--cyan);}
+  .ex-row .name{font-size:15px; font-weight:500;}
+  .ex-row .slot{display:block; margin-top:3px; font-size:11.5px; color:var(--text-dim);}
+  .ex-row .chev{color:var(--cyan); font-size:18px;}
+
+  /* Log form */
+  .ex-header{margin-bottom:18px;}
+  .ex-header .name{font-size:19px; font-weight:700;}
+  .ex-header .slot{font-size:12.5px; color:var(--text-dim); margin-top:2px;}
+  .suggestion{background:#12151C; border:1px solid var(--border); border-radius:14px;
+    padding:12px 14px; margin-bottom:18px; font-size:13px; color:var(--text-dim);}
+  .suggestion b{color:var(--cyan); font-weight:600;}
+
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:12px; text-transform:uppercase; letter-spacing:.05em;
+    color:var(--text-dim); margin-bottom:6px;}
+  .field input, .field textarea{width:100%; background:var(--card); border:1px solid var(--border);
+    border-radius:14px; padding:14px; font-size:17px; color:var(--text); font-family:inherit;}
+  .field input:focus, .field textarea:focus{outline:none; border-color:var(--gold);}
+  .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;}
+
+  .var-btn{background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:12px 8px; text-align:center; font-size:13.5px; cursor:pointer; color:var(--text-dim);}
+  .var-btn.active{border-color:var(--gold); color:var(--gold); background:#1D222D; font-weight:600;}
+
+  .save-btn{width:100%; background:var(--gold); color:#151007; border:none; border-radius:16px;
+    padding:16px; font-size:16px; font-weight:700; cursor:pointer; margin-top:6px;}
+  .save-btn:active{opacity:.85;}
+  .save-btn:disabled{opacity:.5;}
+
+  .status{text-align:center; font-size:13px; margin-top:12px; min-height:18px;}
+  .status.ok{color:var(--ok);}
+  .status.err{color:var(--danger);}
+
+  .empty{color:var(--text-dim); font-size:13px; text-align:center; padding:30px 0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1 id="screenTitle">Registro de Treino</h1>
+    <button class="back-btn" id="backBtn" style="display:none">Voltar</button>
+  </header>
+
+  <!-- SCREEN 1: escolher treino -->
+  <div class="screen active" id="screen-treinos">
+    <div class="treino-grid" id="treinoGrid"></div>
+  </div>
+
+  <!-- SCREEN 2: lista de exercicios do treino -->
+  <div class="screen" id="screen-exercicios">
+    <div class="ex-list" id="exList"></div>
+  </div>
+
+  <!-- SCREEN 3: registrar exercicio -->
+  <div class="screen" id="screen-log">
+    <div class="ex-header">
+      <div class="name" id="logExName"></div>
+      <div class="slot" id="logExSlot"></div>
+    </div>
+    <div class="field" id="variacaoField" style="display:none">
+      <label>Variação de hoje</label>
+      <div class="row3" id="variacaoToggle" style="grid-template-columns:1fr 1fr;"></div>
+    </div>
+    <div class="suggestion" id="suggestionBox">Buscando último registro…</div>
+
+    <div class="row3">
+      <div class="field">
+        <label>Carga (kg)</label>
+        <input type="number" inputmode="decimal" id="inCarga" placeholder="0">
+      </div>
+      <div class="field">
+        <label>Reps</label>
+        <input type="number" inputmode="numeric" id="inReps" placeholder="0">
+      </div>
+      <div class="field">
+        <label>RIR</label>
+        <input type="number" inputmode="numeric" id="inRir" placeholder="0">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Obs (opcional)</label>
+      <textarea id="inObs" rows="2" placeholder="joelho ok, técnica limpa..."></textarea>
+    </div>
+
+    <button class="save-btn" id="saveBtn">Salvar</button>
+    <div class="status" id="statusMsg"></div>
+  </div>
+
+</div>
+
+<script>
+// ====== CONFIGURAR AQUI ======
+// Cole a URL do seu Web App do Apps Script (a mesma usada no doGet/doPost existente)
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxAboD6pqWYey28GX_SVWxb9dW_BQfmaGU36PhkmA3oQ0HKv2EM4UnxuYxA6BulwkVOgQ/exec";
+// ==============================
+
+const TREINOS = {
+  1: { label: "Glúteo + Posterior", exercicios: [
+        {slot:"Hip Hinge Posterior", variacoes:["Stiff Barra","Terra Romeno Halteres"]},
+        {nome:"Mesa Flexora", slot:"Flexão Joelho"},
+        {nome:"Hip Thrust Machine", slot:"Extensão Quadril"},
+        {nome:"Cadeira Abdutora", slot:"Abdução Quadril"},
+      ]},
+  2: { label: "Costas V + Ombro", exercicios: [
+        {nome:"Puxada Alta Aberta", slot:"Puxada Vertical"},
+        {nome:"Remada Baixa Triangulo", slot:"Remada Horizontal"},
+        {nome:"Remada Unilateral Maquina", slot:"Remada Horizontal"},
+        {nome:"Pullover Polia", slot:"Dorsal Acessório"},
+        {nome:"Desenvolvimento Maquina Neutro", slot:"Desenvolvimento Ombro"},
+        {nome:"Elevacao Lateral Unilateral Halter", slot:"Elevação Lateral"},
+      ]},
+  3: { label: "Quadríceps + Glúteo", exercicios: [
+        {nome:"Belt Squat", slot:"Agachamento Quadríceps"},
+        {nome:"Leg Press 45", slot:"Agachamento Quadríceps"},
+        {nome:"Cadeira Extensora", slot:"Extensão Joelho"},
+        {nome:"Gluteo Coice", slot:"Glúteo Isolado"},
+        {nome:"Panturrilha Em Pe", slot:"Panturrilha"},
+      ]},
+  4: { label: "Ombro + Braço", exercicios: [
+        {nome:"Desenvolvimento Unilateral Halter", slot:"Desenvolvimento Ombro"},
+        {nome:"Rosca Direta", slot:"Braço Flexor"},
+        {nome:"Triceps Corda", slot:"Braço Extensor"},
+        {nome:"Rosca Martelo", slot:"Braço Flexor"},
+        {nome:"Panturrilha Sentada", slot:"Panturrilha"},
+      ]},
+  5: { label: "Glúteo Completo", exercicios: [
+        {nome:"Hip Thrust Machine", slot:"Extensão Quadril"},
+        {nome:"Gluteo Coice", slot:"Glúteo Isolado"},
+        {nome:"Flexora Sentada", slot:"Flexão Joelho"},
+        {nome:"Cadeira Abdutora", slot:"Abdução Quadril"},
+      ]},
+  6: { label: "Superior Completo", exercicios: [
+        {nome:"Supino Maquina", slot:"Peitoral"},
+        {nome:"Crucifixo Polia", slot:"Peitoral"},
+        {nome:"Elevacao Lateral Frontal Combinada", slot:"Elevação Lateral"},
+        {nome:"Desenvolvimento Maquina", slot:"Desenvolvimento Ombro"},
+      ]},
+};
+
+let currentTreino = null;
+let currentEx = null;
+
+const screenTitle = document.getElementById("screenTitle");
+const backBtn = document.getElementById("backBtn");
+const screens = {
+  treinos: document.getElementById("screen-treinos"),
+  exercicios: document.getElementById("screen-exercicios"),
+  log: document.getElementById("screen-log"),
+};
+
+function showScreen(name){
+  Object.values(screens).forEach(s => s.classList.remove("active"));
+  screens[name].classList.add("active");
+  backBtn.style.display = name === "treinos" ? "none" : "inline-block";
+  if(name === "treinos") screenTitle.textContent = "Registro de Treino";
+  if(name === "exercicios") screenTitle.textContent = "Treino " + currentTreino;
+  if(name === "log") screenTitle.textContent = currentEx.nome;
+}
+
+function renderTreinoGrid(){
+  const grid = document.getElementById("treinoGrid");
+  grid.innerHTML = "";
+  Object.entries(TREINOS).forEach(([num, t]) => {
+    const btn = document.createElement("button");
+    btn.className = "treino-btn";
+    btn.innerHTML = `<span class="num">Treino ${num}</span><span class="label">${t.label}</span>`;
+    btn.onclick = () => openTreino(num);
+    grid.appendChild(btn);
+  });
+}
+
+function openTreino(num){
+  currentTreino = num;
+  const list = document.getElementById("exList");
+  list.innerHTML = "";
+  const t = TREINOS[num];
+  if(!t.exercicios.length){
+    list.innerHTML = '<div class="empty">Nenhum exercício cadastrado neste treino.</div>';
+  }
+  t.exercicios.forEach(ex => {
+    const row = document.createElement("div");
+    row.className = "ex-row";
+    const nomeExibido = ex.variacoes ? ex.slot : ex.nome;
+    const subtitulo = ex.variacoes ? "escolha: " + ex.variacoes.join(" / ") : ex.slot;
+    row.innerHTML = `<div><div class="name">${nomeExibido}</div><div class="slot">${subtitulo}</div></div><div class="chev">›</div>`;
+    row.onclick = () => openLog(ex);
+    list.appendChild(row);
+  });
+  showScreen("exercicios");
+}
+
+function openLog(ex){
+  currentEx = ex;
+  // se o item tem variacoes, comeca com a primeira selecionada
+  currentEx.nomeAtivo = ex.variacoes ? ex.variacoes[0] : ex.nome;
+
+  document.getElementById("logExName").textContent = ex.variacoes ? ex.slot : ex.nome;
+  document.getElementById("logExSlot").textContent = ex.slot;
+  document.getElementById("inCarga").value = "";
+  document.getElementById("inReps").value = "";
+  document.getElementById("inRir").value = "";
+  document.getElementById("inObs").value = "";
+  document.getElementById("statusMsg").textContent = "";
+  document.getElementById("statusMsg").className = "status";
+
+  const varField = document.getElementById("variacaoField");
+  const varToggle = document.getElementById("variacaoToggle");
+  if(ex.variacoes){
+    varField.style.display = "block";
+    varToggle.innerHTML = "";
+    ex.variacoes.forEach(v => {
+      const b = document.createElement("div");
+      b.className = "var-btn" + (v === currentEx.nomeAtivo ? " active" : "");
+      b.textContent = v;
+      b.onclick = () => {
+        currentEx.nomeAtivo = v;
+        document.getElementById("logExName").textContent = v;
+        [...varToggle.children].forEach(c => c.classList.remove("active"));
+        b.classList.add("active");
+      };
+      varToggle.appendChild(b);
+    });
+    document.getElementById("logExName").textContent = currentEx.nomeAtivo;
+  } else {
+    varField.style.display = "none";
+  }
+
+  document.getElementById("suggestionBox").textContent = "Buscando último registro…";
+  showScreen("log");
+  buscarUltimaCarga(ex.slot);
+}
+
+async function buscarUltimaCarga(slot){
+  const box = document.getElementById("suggestionBox");
+  try{
+    const url = `${APPS_SCRIPT_URL}?action=ultimaCarga&slot=${encodeURIComponent(slot)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if(data && data.encontrado){
+      box.innerHTML = `Último registro (${data.data}, ${data.exercicio}): <b>${data.carga}kg</b> × ${data.reps} reps, RIR ${data.rir}`;
+      document.getElementById("inCarga").placeholder = data.carga;
+      document.getElementById("inReps").placeholder = data.reps;
+      document.getElementById("inRir").placeholder = data.rir;
+    } else {
+      box.textContent = "Sem registro anterior deste padrão de movimento — primeira vez.";
+    }
+  } catch(err){
+    box.textContent = "Não consegui buscar o histórico (sem conexão?). Pode registrar normalmente.";
+  }
+}
+
+document.getElementById("saveBtn").onclick = async () => {
+  const carga = document.getElementById("inCarga").value;
+  const reps = document.getElementById("inReps").value;
+  const rir = document.getElementById("inRir").value;
+  const obs = document.getElementById("inObs").value;
+  const statusEl = document.getElementById("statusMsg");
+  const btn = document.getElementById("saveBtn");
+
+  if(!carga || !reps){
+    statusEl.textContent = "Preencha pelo menos Carga e Reps.";
+    statusEl.className = "status err";
+    return;
+  }
+
+  btn.disabled = true;
+  statusEl.textContent = "Salvando…";
+  statusEl.className = "status";
+
+  const hoje = new Date();
+  const dataFormatada = String(hoje.getDate()).padStart(2,"0") + "/" +
+                         String(hoje.getMonth()+1).padStart(2,"0") + "/" +
+                         hoje.getFullYear();
+
+  const payload = {
+    action: "registrarTreino",
+    data: dataFormatada,
+    treino: "Treino " + currentTreino,
+    exercicio: currentEx.nomeAtivo,
+    carga: carga,
+    reps: reps,
+    rir: rir,
+    obs: obs
+  };
+
+  try{
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      headers: {"Content-Type": "text/plain;charset=utf-8"}, // evita preflight CORS no Apps Script
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json();
+    if(result && result.sucesso){
+      statusEl.textContent = "Salvo!";
+      statusEl.className = "status ok";
+      setTimeout(() => openTreino(currentTreino), 500); // volta pra lista do mesmo treino
+    } else {
+      statusEl.textContent = "Erro ao salvar: " + (result.erro || "desconhecido");
+      statusEl.className = "status err";
+      btn.disabled = false;
+    }
+  } catch(err){
+    statusEl.textContent = "Falha de conexão. Tente de novo.";
+    statusEl.className = "status err";
+    btn.disabled = false;
+  }
+};
+
+backBtn.onclick = () => {
+  if(screens.log.classList.contains("active")) openTreino(currentTreino);
+  else showScreen("treinos");
+};
+
+renderTreinoGrid();
+</script>
+</body>
+</html>
